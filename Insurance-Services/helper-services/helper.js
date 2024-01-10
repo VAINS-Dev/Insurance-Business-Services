@@ -6,18 +6,14 @@ const loadConfig = require('../config/configLoader')
 const apiPolicyBaseUrl = loadConfig.getConfig('PolicyAPI').baseUrl
 const BenefitDetailsAPI = apiPolicyBaseUrl + `/v1/Policy/GetBenefitDetails`
 
-const apiKey = loadConfig.getConfig('PolicyAPI').apiKey
+const policyAPIKey = loadConfig.getConfig('PolicyAPI').apiKey
 
 function generateGuid() {
-
-    // Define a function to generate a random hexadecimal number with 4 digits
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
             .substring(1);
     }
-
-    // Generate the GUID by concatenating random hexadecimal numbers
     return (
         s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4()
@@ -49,7 +45,7 @@ async function GetBenefitDetails(policyNumber){
         method: 'POST',
         headers:{
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
+            'Authorization': `Bearer ${policyAPIKey}`
         },
         body: JSON.stringify(requestBody),
     };

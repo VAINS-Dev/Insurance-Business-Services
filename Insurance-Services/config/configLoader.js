@@ -1,17 +1,15 @@
 // configLoader.js
 const fs = require('fs');
-const config = require('../../configuration/config.json')
+//const config = require('../../Insurance-Services/config')
 
 function loadConfig() {
-    const configPath = 'configuration/config.json'; // Adjust the path as needed
+    const configPath = 'Insurance-Services/config/configuration/config.json'; 
     const configData = fs.readFileSync(configPath, 'utf8');
     const config = JSON.parse(configData);
 
-    // Determine which environment configuration to use
     const environment = config.envfeatureSwitch.preprodEnabled ? 'preprod' : 'prod';
     const environmentConfig = config.environment[environment];
 
-    // Extract and provide the required variables
     const ProductAPI = {
         baseUrl: environmentConfig.ProductAPI.baseUrl,
         apiKey: environmentConfig.ProductAPI.apiKey,
