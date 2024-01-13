@@ -24,12 +24,18 @@ function loadConfig() {
         baseUrl: environmentConfig.PolicyAPI.baseUrl,
         apiKey: environmentConfig.PolicyAPI.apiKey,
     };
+    const sqlServerConfig = {
+        host: environmentConfig.sqlServer.host,
+        user: environmentConfig.sqlServer.user,
+        password: environmentConfig.sqlServer.password
+    };
 
     return {
         environment,
         ProductAPI,
         PartyAPI,
         PolicyAPI,
+        sqlServerConfig,
     };
 };
 
@@ -40,6 +46,9 @@ function getConfig(apiName) {
          baseUrl: config[apiName].baseUrl,
          apiKey: config[apiName].apiKey,   
          environment: config.environment,
+         host: config.host,
+         user: config.user,
+         password: config.password
         };
     } else {
         throw new Error(`API ${apiName} was not found in configuration.`);

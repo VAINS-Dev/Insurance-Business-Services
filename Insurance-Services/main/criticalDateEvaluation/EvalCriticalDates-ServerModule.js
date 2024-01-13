@@ -272,6 +272,8 @@ async function evaluateCriticalDates(policyNumber) {
                             criticalDate: null,
                             cashValue: null,
                             loanIndebtedness: null,
+                            required_repayment: null,
+                            monthly_repayment: null,
                             returnCode: 1,
                             MessageInfo: "Critical Date prior to last anniversary date"
                         };
@@ -300,6 +302,9 @@ async function evaluateCriticalDates(policyNumber) {
                 criticalDate: null,
                 cashValue: null,
                 loanIndebtedness: null,
+                required_repayment: required_repayment_amt,
+                monthly_repayment: monthly_repayment_amt,
+                returnCode: 1,
                 MessageInfo: "No critical date found"
             };
         }
@@ -310,12 +315,18 @@ async function evaluateCriticalDates(policyNumber) {
             criticalDate: null,
             cashValue: null,
             loanIndebtedness: null,
+            required_repayment: null,
+            monthly_repayment: null,
             returnCode: 1,
             MessageInfo: error.message
         };
     }
 }
 
+
+function roundToTheNearestHundreth(num) {
+    return Math.round(num * 100) / 100;
+}
 
 async function findCriticalDate(policyNumber, startDate, endDate) {
     const currentDate = parseDateString(startDate);
@@ -324,6 +335,8 @@ async function findCriticalDate(policyNumber, startDate, endDate) {
     while (currentDate <= finalEndDate) {
         const formattedDate = formatDate(currentDate);
         const response = await getSurrenderQuote(policyNumber, formattedDate);
+        const required_repayment_amt = roundToTheNearestHundreth(response.cV * 0.06)
+        const monthly_repayment_amt = roundToTheNearestHundreth((response.lI - required_repayment_amt) / 5 / 12);
 
         if (response && response.netSurr >= -1 && response.netSurr <= 1) {
             return {
@@ -331,6 +344,8 @@ async function findCriticalDate(policyNumber, startDate, endDate) {
                 criticalDate: reformatDate(formattedDate),
                 cashValue: response.cV,
                 loanIndebtedness: response.lI,
+                required_repayment: required_repayment_amt,
+                monthly_repayment: monthly_repayment_amt,
                 returnCode: 0,
                 MessageInfo: null
             

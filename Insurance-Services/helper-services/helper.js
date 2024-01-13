@@ -79,7 +79,18 @@ async function GetBenefitDetails(policyNumber){
 
 
 
-        
-module.exports = {GetBenefitDetails, generateGuid};
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = { GetBenefitDetails, generateGuid };
 
 

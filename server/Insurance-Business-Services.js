@@ -30,6 +30,7 @@ app.use(setRequestTimeout);
 const loadConfig = require('../Insurance-Services/config/configLoader')
 
 const BA = require('../Insurance-Services/helper-services/helper')
+
 app.get('/INSBusinessServiceAPI/evaluatePolicy/getBenefitDetails/:policyNumber', async (req, res, timeout) => {
         try {
             const policyNumber = req.params.policyNumber;
@@ -56,6 +57,12 @@ app.get('/INSBusinessServiceAPI/evaluatePolicy/getBenefitDetails/:policyNumber',
         }
     });
 
+
+    //Critical Date Service:
+    //Utilizes web service module to perform sequential requests against the SurrenderQuote LifePRO web service.
+    //The service will only calculate a critical date within the current policy anniversary year for any given policy. Because LifePRO calculates and performs
+    //Quotes using specific date schema, it is not possible to perform these calculates in advance of the current anniversary.
+    //It is possible to and end-user to reverse the current anniversary if they receive a "Critical Date not in this anniversary year" return message.
 const evaluateCriticalDates = require('../Insurance-Services/main/criticalDateEvaluation/EvalCriticalDates-ServerModule')
 app.get('/INSBusinessServiceAPI/evaluatePolicy/evaluateCriticalDates/:policyNumber', async (req, res, timeout) => {
     try {
@@ -69,7 +76,10 @@ app.get('/INSBusinessServiceAPI/evaluatePolicy/evaluateCriticalDates/:policyNumb
                 policyNumber: result.policyNumber,
                 criticalDate: result.criticalDate,
                 cashValue: result.cashValue,
+                required_repayment: result.required_repayment,
+                monthly_repayment: result.monthly_repayment,
                 loanIndebtedness: result.loanIndebtedness,
+                returnCode: result.returnCode,
                 MessageInfo: result.MessageInfo
             });
         } else {

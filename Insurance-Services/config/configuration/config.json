@@ -16,6 +16,11 @@
       "PolicyAPI": {
         "baseUrl": "http://vac10weblps400.va.gov:1458/LPRestPolicyAPI",
         "apiKey": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE"
+      },
+      "sqlServer": {
+        "host": "localhost:1443",
+        "user": "VBAINS",
+        "password": "1217"
       }
     },
     "prod": {
@@ -31,6 +36,11 @@
       "PolicyAPI": {
         "baseUrl": "http://vac10weblps200.va.gov:8083/LPRestPolicyAPI",
         "apiKey": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE"
+      },
+      "sqlServer": {
+        "host": "",
+        "user": "",
+        "password": ""
       }
     }
   }

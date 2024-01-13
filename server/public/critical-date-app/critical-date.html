@@ -274,10 +274,12 @@
                             }
                             if (validationData && validationData.policyNumber) {
                                 // Check policyStatus and planCode
+                                // Checks if the policy status is active, if policy is not active, we cannot execute the criticaldate service.
                                 if (validationData.policyStatus !== 'A') {
                                     modalText.textContent = 'Policy Status is Not Active, Cannot run Critical Date Calculation';
                                     loadingSymbol.style.display = 'none';
                                     showModal();
+                                    // loan ineligible plan types (in browser validation-no web service call)
                                 } else if (['LG9GBV', 'LVMLI', 'LV37BV', 'LV37SV'].includes(validationData.planCode)) {
                                     modalText.textContent = 'Policy Plan type is not loan eligible';
                                     loadingSymbol.style.display = 'none';
