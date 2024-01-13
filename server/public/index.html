@@ -2,191 +2,170 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Critical Date Evaluation</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <title>Insurance Business Service Portal</title>
     <style>
-        /* Additional CSS for Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            padding-top: 100px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
+        body {
+            font-family: "Roboto", sans-serif;
+            background: #f5f5f5;
         }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 50%;
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 3px 0;
+            height: 10px;
+            display:flex;
+            justify-content: space-between;
+            align-items:center;
         }
-
-        .close {
-            color: #aaaaaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
+        .menu-button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+            width:100px;
+            float:right;
+        }
+        .menu-button:hover {
+            background-color: #003d82;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 2rem;
+            background-color: #f2f2f2;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 4px;
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 8px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+        .tile {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .tile:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tile:hover::before {
+            opacity: 1;
+        }
+        .tile-desc {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s linear;
+        }
+        .tile:hover .tile-desc {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tiles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .tile h3 {
+            color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div id="systemStatusIndicator" class="status-indicator">
-        <span id="systemStatusDot" class="status-dot"></span>
-        <span id="systemStatusText" class="status-text">Checking...</span>
-
-        <!-- Dropdown Menu for Per-Service Status -->
-        <div id="serviceStatusDropdown" class="status-dropdown">
-            <p id="PartyAPIStatus">PartyAPI: Checking...</p>
-            <p id="PolicyAPIStatus">PolicyAPI: Checking...</p>
-            <p id="ProductAPIStatus">ProductAPI: Checking...</p>
+    <header class="container-fluid">
+        <strong>Insurance Business Service Portal</strong>
+        <div>
+            <button class="menu-button" onclick="toggleMenu()">Menu</button>
+            <div id="dropdownMenu" class="dropdown-content">
+                <a href="index.html">Home</a>
+                <a href="index.html">Applications</a>
+                <a href="#">Settings</a>
+            </div>
         </div>
-    </div>
-    <h1>Critical Date Evaluation</h1>
-    <form id="PolicyNumberForm">
-        <label for="policyNumber">Enter a Policy Number:</label>
-        <input placeholder="Enter policy number" class="input" type="text" id="policyNumber" name="policyNumber">
-        <span role="alert" id="policyNumberError" hidden>Policy Number is Required</span><br><br>
-        <br>
-        <br>
-    
-        <button type="button" id="GetCriticalDateButton" class="button-21" disabled>Get Critical Date</button>
-        <button type="button" id="ClearButton" class="button-23">Clear</button>
-    </form>
-    <br>
-    <div id="loadingSymbol" class="loader" name="Loading" placeholder="Loading..."></div>
-    <div id="responseSection">
-        <h4>Policy Number: <span id="PolicyNumberAPIResponse"></span></h4>
-        <p>Critical Date: <span id="CriticalDateAPIResponse"></span></p>
-        <p>Cash Value: $<span id="CashValueAPIResponse"></span></p>
-        <p>Loan Indebtedness: $<span id="LoanIndebtednessAPIResponse"></span></p>
-        <p>Additional Info: <span id="AdditionalInfoAPIResponse"></span></p>
-        <br>
-        <h4>Repayment Information:</h4>
-        <p>Required Repayment Amount: $<span id="LumpRepayment"></span></p>
-        <p>Monthly Repayment Amount: $<span id="monthlyRepayment"></span></p>
-        <p></p>
-    </div>
-
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p id="modalText"></p>
+    </header>
+    <main class="container">
+        <div class="tiles">
+            <!-- Tile 1 -->
+            <a href="critical-date-app/critical-date.html">
+            <div class="tile">
+                <h3>Critical Date Application</h3>
+                <p class="tile-desc">Application user interface for end user to process critical date calculations to inform policy holders of financial policy status.</p>
+            </div>
+            </a>
+            <!-- Tile 2 -->
+            <a href="SecondPage/secondpage.html">
+            <div class="tile">
+                <h3>Feature Two</h3>
+                <p class="tile-desc">Overview of feature two's capabilities.</p>
+            </div>
+            </a>
+            <div class="tile">
+                <h3>Feature Three</h3>
+                <p class="tile-desc">Overview of feature two's capabilities.</p>
+            </div>
+            <div class="tile">
+                <h3>Feature Four</h3>
+                <p class="tile-desc">Overview of feature two's capabilities.</p>
+            </div>
+            <div class="tile">
+                <h3>Feature Five</h3>
+                <p class="tile-desc">Overview of feature two's capabilities.</p>
+            </div>
+            <div class="tile">
+                <h3>Feature Six</h3>
+                <p class="tile-desc">Overview of feature two's capabilities.</p>
+            </div>
+            <!-- Additional tiles as needed -->
         </div>
-    </div>
-
+    </main>
+    <footer class="container">
+        <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
+    </footer>
     <script>
-        function roundToNearestHundreth(num) {
-            return Math.round(num*100)/100;
+        function toggleMenu() {
+            var dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const policyNumberInput = document.getElementById('policyNumber');
-            const getCriticalDateButton = document.getElementById('GetCriticalDateButton');
-            const clearButton = document.getElementById('ClearButton');
-            const responseSection = document.getElementById('responseSection');
-            const loadingSymbol = document.getElementById('loadingSymbol');
-            const modal = document.getElementById('myModal');
-            const modalText = document.getElementById('modalText');
-            const span = document.getElementsByClassName('close')[0];
-
-            policyNumberInput.addEventListener('input', function() {
-                getCriticalDateButton.disabled = !policyNumberInput.value.trim();
-            });
-
-            getCriticalDateButton.addEventListener('click', function() {
-                const policyNumber = policyNumberInput.value;
-                if (policyNumber) {
-                    loadingSymbol.style.display = 'block'; // Show loader
-                    const validationEndpoint = `/INSBusinessServiceAPI/evaluatePolicy/getBenefitDetails/${policyNumber}`;
-                    fetch(validationEndpoint)
-                        .then(response => response.json())
-                        .then(validationData => {
-                            if (validationData && validationData.policyNumber) {
-                                // Check policyStatus and planCode
-                                if (validationData.policyStatus !== 'A') {
-                                    modalText.textContent = 'Policy Status is Not Active, Cannot run Critical Date Calculation';
-                                    showModal();
-                                } else if (['LG9GBV', 'LVMLI', 'LV37BV', 'LV37SV'].includes(validationData.planCode)) {
-                                    modalText.textContent = 'Policy Plan type is not loan Eligible';
-                                    showModal();
-                                } else {
-                                    // Continue with existing functionality
-                                    fetchCriticalDate(policyNumber);
-                                }
-                            } else {
-                                modalText.textContent = 'Policy Number not found. Please try again.';
-                                showModal();
-                            }
-                            loadingSymbol.style.display = 'none'; // Hide loader
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            modalText.textContent = 'An error occurred. Please try again.';
-                            showModal();
-                            loadingSymbol.style.display = 'none'; // Hide loader
-                        });
-                }
-            });
-
-            clearButton.addEventListener('click', function() {
-                policyNumberInput.value = '';
-                policyNumberInput.dispatchEvent(new Event('input'));
-                responseSection.querySelectorAll('span').forEach(span => span.textContent = '');
-                modal.style.display = 'none';
-            });
-
-            span.onclick = function() {
-                modal.style.display = 'none';
+        window.onclick = function(event) {
+            if (!event.target.matches('.menu-button')) {
+                var dropdownMenus = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdownMenus.length; i++) {
+                    var openDropdown = dropdownMenus[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
             }
-
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
-
-            function showModal() {
-                modal.style.display = 'block';
-            }
-
-            function fetchCriticalDate(policyNumber) {
-                const apiEndpoint = `/INSBusinessServiceAPI/evaluatePolicy/evaluateCriticalDates/${policyNumber}`;
-                fetch(apiEndpoint)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Display the data
-                        document.getElementById('PolicyNumberAPIResponse').textContent = data.policyNumber;
-                        document.getElementById('CriticalDateAPIResponse').textContent = data.criticalDate;
-                        document.getElementById('CashValueAPIResponse').textContent = data.cashValue;
-                        document.getElementById('LoanIndebtednessAPIResponse').textContent = data.loanIndebtedness;
-                        document.getElementById('LumpRepayment').textContent = roundToNearestHundreth(data.cashValue * 0.06);
-                        const calcAmt = data.cashValue * 0.06;
-                        document.getElementById('monthlyRepayment').textContent = roundToNearestHundreth((data.loanIndebtedness - calcAmt) / 5 / 12);
-                        loadingSymbol.style.display = 'none'; // Hide loader
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        loadingSymbol.style.display = 'none'; // Hide loader
-                    });
-            }
-        });
-    </script>
-    <script src="script.js"></script>
+        }
+    }
+    </script>            
 </body>
 </html>

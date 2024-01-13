@@ -1,0 +1,331 @@
+<html>
+    <head>
+        <style>
+            :root {
+                --orig-color-red: #e31c3d;
+                --orig-color-red-lightest: #f9dede;
+                --orig-color-red-light: #e59393;
+                --orig-color-red-dark: #cd2026;
+                --orig-color-base: #212121;
+                --orig-color-secondary: #e31c3d;
+                --orig-color-secondary-light: var(--orig-color-red-light);
+                --orig-color-secondary-dark: var(--orig-color-red-dark);
+                --orig-color-secondary-lightest: #f9dede;
+                --orig-color-secondary-darkest: #981b1e;
+
+                --orig-color-gray: #5b616b;
+                --orig-color-gray-light: #aeb0b5;
+                --orig-color-gray-light-alt: #eee;
+                --orig-color-gray-lighter: #d6d7d9;
+                --orig-color-gray-lightest: #f1f1f1;
+                --orig-color-gray-medium: #757575;
+                --orig-color-gray-dark: #323a45;
+                --orig-color-gray-warm-light: #e4e2e0;
+                --orig-color-gray-warm-dark: #494440;
+                --orig-color-gray-cool-light: #dce4ef;
+
+                --orig-color-green: #2e8540;
+                --orig-color-green-lightest: #e7f4e4;
+                --orig-color-green-lighter: #94bfa2;
+                --orig-color-green-light: #4aa564;
+                --orig-color-green-darker: #195c27;
+
+                --orig-color-gold-lightest: #fff1d2;
+                --orig-color-gold-lighter: #fad980;
+                --orig-color-gold-light: #f9c642;
+                --orig-color-gold: #fdb81e;
+                --orig-color-gold-darker: #988530;
+
+                --orig-color-va-accent: #988530;
+                --orig-color-feedback-warning-background: #fac922;
+                --orig-color-inset-bg: #e0f3f8;
+                --orig-color-gibill-accent: #fff1d2;
+
+                --orig-color-orange: #EB7F29;
+
+                --orig-red-70v: #8b1303;
+
+                --orig-polar: #E8F5FA;
+                --orig-green-white: #eff0e6;
+                --orig-olso-gray: #849097;
+                --orig-mm-gray: #f1f1f1;
+
+
+
+                --color-red: #d83933;
+                --color-red-lightest: #f8dfe2;
+                --color-red-light: #f2938c;
+                --color-red-dark: #b50909;
+                --color-base: #1b1b1b;
+                --color-secondary: #d83933;
+                --color-secondary-light: var(--color-red-light);
+                --color-secondary-dark: var(--color-red-dark);
+                --color-secondary-lightest: #f8dfe2;
+                --color-secondary-darkest: #8b0a03;
+
+                --color-gray: #565c65;
+                --color-gray-light: #a9aeb1;
+                --color-gray-light-alt: #edeff0;
+                --color-gray-lighter: #dfe1e2;
+                --color-gray-lightest: #f0f0f0;
+                --color-gray-medium: #757575;
+                --color-gray-dark: #3d4551;
+                --color-gray-warm-light: #e6e6e2;
+                --color-gray-warm-dark: #454540;
+                --color-gray-cool-light: #e1e7f1;
+
+                --color-green: #008817;
+                --color-green-lightest: #ecf3ec;
+                --color-green-lighter: #b4d0b9;
+                --color-green-light: #5e9f69;
+                --color-green-darker: #154c21;
+
+                --color-gold-lightest: #fef0c8;
+                --color-gold-lighter: #ffe396;
+                --color-gold-light: #face00;
+                --color-gold: #ffbe2e;
+                --color-gold-darker: #936f38;
+
+                --color-va-accent: #8a7237;
+                --color-feedback-warning-background: #faf3d1;
+                --color-inset-bg: #e7f6f8;
+                --color-gibill-accent: #fff1d2;
+                
+                --color-orange: #dd7533;
+
+                --red-70v: #8b0a03;
+
+                --polar: #e7f6f8;
+                --green-white: #f5f0e6;
+                --olso-gray: #8d9297;
+                --mm-gray: #f0f0f0;
+                
+            }
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            table {
+                width: 100%;
+            }
+            td {
+                padding: 20px;
+                text-align: center;
+            }
+            td:first-child {
+                text-align: left;
+            }
+            .color {
+                background: #FFF;
+                padding: 5px;
+                font-size: .7rem;
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <td>Color Name</td>
+                <td>Formation</td>
+                <td>USWDS V3</td>
+            </thead>
+            <tr>
+                <td>color-red</td>
+                <td style="background-color: var(--orig-color-red);"><span class="color">#e31c3d</span></td>
+                <td style="background-color: var(--color-red);"><span class="color">#d83933</span></td>
+            </tr>
+            <tr>
+                <td>color-red-lightest</td>
+                <td style="background-color: var(--orig-color-red-lightest);"><span class="color">#f9dede</span></td>
+                <td style="background-color: var(--color-red-lightest);"><span class="color">#f8dfe2</span></td>
+            </tr>
+            <tr>
+                <td>color-red-light</td>
+                <td style="background-color: var(--orig-color-red-light);"><span class="color">#e59393</span></td>
+                <td style="background-color: var(--color-red-light);"><span class="color">#f2938c</span></td>
+            </tr>
+            <tr>
+                <td>color-red-dark</td>
+                <td style="background-color: var(--orig-color-red-dark);"><span class="color">#cd2026</span></td>
+                <td style="background-color: var(--color-red-dark);"><span class="color">#b50909</span></td>
+            </tr>
+            <tr>
+                <td>color-base</td>
+                <td style="background-color: var(--orig-color-base);"><span class="color">#212121</span></td>
+                <td style="background-color: var(--color-base);"><span class="color">#1b1b1b</span></td>
+            </tr>
+            <tr>
+                <td>color-secondary</td>
+                <td style="background-color: var(--orig-color-secondary);"><span class="color">#e31c3d</span></td>
+                <td style="background-color: var(--color-secondary);"><span class="color">#d83933</span></td>
+            </tr>
+            <tr>
+                <td>color-secondary-lightest</td>
+                <td style="background-color: var(--orig-color-secondary-lightest);"><span class="color">#f9dede</span></td>
+                <td style="background-color: var(--color-secondary-lightest);"><span class="color">#f8dfe2</span></td>
+            </tr>
+            <tr>
+                <td>color-secondary-light</td>
+                <td style="background-color: var(--orig-color-secondary-light);"><span class="color">#e59393</span></td>
+                <td style="background-color: var(--color-secondary-light);"><span class="color">#f2938c</span></td>
+            </tr>
+            <tr>
+                <td>color-secondary-dark</td>
+                <td style="background-color: var(--orig-color-secondary-dark);"><span class="color">#cd2026</span></td>
+                <td style="background-color: var(--color-secondary-dark);"><span class="color">#b50909</span></td>
+            </tr>
+            <tr>
+                <td>color-secondary-darkest</td>
+                <td style="background-color: var(--orig-color-secondary-darkest);"><span class="color">#981b1e</span></td>
+                <td style="background-color: var(--color-secondary-darkest);"><span class="color">#8b0a03</span></td>
+            </tr>
+            <tr>
+                <td>color-gray</td>
+                <td style="background-color: var(--orig-color-gray);"><span class="color">#5b616b</span></td>
+                <td style="background-color: var(--color-gray);"><span class="color">#565c65</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-light</td>
+                <td style="background-color: var(--orig-color-gray-light);"><span class="color">#aeb0b5</span></td>
+                <td style="background-color: var(--color-gray-light);"><span class="color">#a9aeb1</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-light-alt</td>
+                <td style="background-color: var(--orig-color-gray-light-alt);"><span class="color">#eee</span></td>
+                <td style="background-color: var(--color-gray-light-alt);"><span class="color">#edeff0</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-lighter</td>
+                <td style="background-color: var(--orig-color-gray-lighter);"><span class="color">#d6d7d9</span></td>
+                <td style="background-color: var(--color-gray-lighter);"><span class="color">#dfe1e2</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-lightest</td>
+                <td style="background-color: var(--orig-color-gray-lightest);"><span class="color">#f1f1f1</span></td>
+                <td style="background-color: var(--color-gray-lightest);"><span class="color">#f0f0f0</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-medium</td>
+                <td style="background-color: var(--orig-color-gray-medium);"><span class="color">#757575</span></td>
+                <td style="background-color: var(--color-gray-medium);"><span class="color">#757575</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-dark</td>
+                <td style="background-color: var(--orig-color-gray-dark);"><span class="color">#323a45</span></td>
+                <td style="background-color: var(--color-gray-dark);"><span class="color">#3d4551</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-warm-light</td>
+                <td style="background-color: var(--orig-color-gray-warm-light);"><span class="color">#e4e2e0</span></td>
+                <td style="background-color: var(--color-gray-warm-light);"><span class="color">#e6e6e2</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-warm-dark</td>
+                <td style="background-color: var(--orig-color-gray-warm-dark);"><span class="color">#494440</span></td>
+                <td style="background-color: var(--color-gray-warm-dark);"><span class="color">#454540</span></td>
+            </tr>
+            <tr>
+                <td>color-gray-cool-light</td>
+                <td style="background-color: var(--orig-color-gray-cool-light);"><span class="color">#dce4ef</span></td>
+                <td style="background-color: var(--color-gray-cool-light);"><span class="color">#e1e7f1</span></td>
+            </tr>
+            <tr>
+                <td>color-green</td>
+                <td style="background-color: var(--orig-color-green);"><span class="color">#2e8540</span></td>
+                <td style="background-color: var(--color-green);"><span class="color">#008817</span></td>
+            </tr>
+            <tr>
+                <td>color-green-lightest</td>
+                <td style="background-color: var(--orig-color-green-lightest);"><span class="color">#e7f4e4</span></td>
+                <td style="background-color: var(--color-green-lightest);"><span class="color">#ecf3ec</span></td>
+            </tr>
+            <tr>
+                <td>color-green-lighter</td>
+                <td style="background-color: var(--orig-color-green-lighter);"><span class="color">#94bfa2</span></td>
+                <td style="background-color: var(--color-green-lighter);"><span class="color">#b4d0b9</span></td>
+            </tr>
+            <tr>
+                <td>color-green-light</td>
+                <td style="background-color: var(--orig-color-green-light);"><span class="color">#4aa564</span></td>
+                <td style="background-color: var(--color-green-light);"><span class="color">#5e9f69</span></td>
+            </tr>
+            <tr>
+                <td>color-green-darker</td>
+                <td style="background-color: var(--orig-color-green-darker);"><span class="color">#195c27</span></td>
+                <td style="background-color: var(--color-green-darker);"><span class="color">#154c21</span></td>
+            </tr>
+            <tr>
+                <td>color-gold-lightest</td>
+                <td style="background-color: var(--orig-color-gold-lightest);"><span class="color">#fff1d2</span></td>
+                <td style="background-color: var(--color-gold-lightest);"><span class="color">#fef0c8</span></td>
+            </tr>
+            <tr>
+                <td>color-gold-lighter</td>
+                <td style="background-color: var(--orig-color-gold-lighter);"><span class="color">#fad980</span></td>
+                <td style="background-color: var(--color-gold-lighter);"><span class="color">#ffe396</span></td>
+            </tr>
+            <tr>
+                <td>color-gold-light</td>
+                <td style="background-color: var(--orig-color-gold-light);"><span class="color">#f9c642</span></td>
+                <td style="background-color: var(--color-gold-light);"><span class="color">#face00</span></td>
+            </tr>
+            <tr>
+                <td>color-gold</td>
+                <td style="background-color: var(--orig-color-gold);"><span class="color">#fdb81e</span></td>
+                <td style="background-color: var(--color-gold);"><span class="color">#ffbe2e</span></td>
+            </tr>
+            <tr>
+                <td>color-gold-darker</td>
+                <td style="background-color: var(--orig-color-gold-darker);"><span class="color">#988530</span></td>
+                <td style="background-color: var(--color-gold-darker);"><span class="color">#936f38</span></td>
+            </tr>
+            <tr>
+                <td>color-orange</td>
+                <td style="background-color: var(--orig-color-orange);"><span class="color">#EB7F29</span></td>
+                <td style="background-color: var(--color-orange);"><span class="color">#dd7533</span></td>
+            </tr>
+
+            <tr>
+                <td>color-va-accent</td>
+                <td style="background-color: var(--orig-color-va-accent);"><span class="color">#988530</span></td>
+                <td style="background-color: var(--color-va-accent);"><span class="color">#8a7237</span></td>
+            </tr>
+            <tr>
+                <td>color-feeback-warning-background</td>
+                <td style="background-color: var(--orig-color-feeback-warning-background);"><span class="color">#fac922</span></td>
+                <td style="background-color: var(--color-feeback-warning-background);"><span class="color">#faf3d1</span></td>
+            </tr>
+            <tr>
+                <td>color-inset-bg</td>
+                <td style="background-color: var(--orig-color-inset-bg);"><span class="color">#e0f3f8</span></td>
+                <td style="background-color: var(--color-inset-bg);"><span class="color">#e7f6f8</span></td>
+            </tr>
+            <tr>
+                <td>color-gibill-accent</td>
+                <td style="background-color: var(--orig-color-gibill-accent);"><span class="color">#fff1d2</span></td>
+                <td style="background-color: var(--color-gibill-accent);"><span class="color">#fef0c8</span></td>
+            </tr>
+            <tr>
+                <td>red-70v</td>
+                <td style="background-color: var(--orig-red-70v);"><span class="color">#8b1303</span></td>
+                <td style="background-color: var(--red-70v);"><span class="color">#8b0a03</span></td>
+            </tr>
+            <tr>
+                <td>polar</td>
+                <td style="background-color: var(--orig-polar);"><span class="color">#E8F5FA</span></td>
+                <td style="background-color: var(--polar);"><span class="color">#e7f6f8</span></td>
+            </tr><tr>
+                <td>green-white</td>
+                <td style="background-color: var(--orig-green-white);"><span class="color">#eff0e6</span></td>
+                <td style="background-color: var(--green-white);"><span class="color">#f5f0e6</span></td>
+            </tr><tr>
+                <td>olso-gray</td>
+                <td style="background-color: var(--orig-olso-gray);"><span class="color">#849097</span></td>
+                <td style="background-color: var(--olso-gray);"><span class="color">#8d9297</span></td>
+            </tr><tr>
+                <td>mm-gray</td>
+                <td style="background-color: var(--orig-mm-gray);"><span class="color">#f1f1f1</span></td>
+                <td style="background-color: var(--mm-gray);"><span class="color">#f0f0f0</span></td>
+            </tr>
+        </table>
+    </body>
+</html>

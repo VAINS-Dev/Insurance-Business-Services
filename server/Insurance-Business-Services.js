@@ -20,8 +20,9 @@ app.use(express.json()); // for parsing application/json
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Sending the main page
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.use(setRequestTimeout);
