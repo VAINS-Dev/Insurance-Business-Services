@@ -94,6 +94,13 @@ app.get('/INSBusinessServiceAPI/evaluatePolicy/evaluateCriticalDates/:policyNumb
     }
 });
 
+const runArcher = require('../Insurance-Services/ARCHER/ARCHER-framework')
+//ARCHER FrameWork Initiation:
+//Uncomment interval line
+
+//  setInterval(runArcher, 900000);
+
+
 
 
 const port = 3000;
