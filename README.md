@@ -1,6 +1,6 @@
 # Insurance-Business-Services
 
-### Welcome to the Insurance-Business-Services application, a comprehensive web-based architecture designed to revolutionize the insurance sector. This application serves as a pivotal solution for clients needing to access critical dates of insurance policies and streamlines the process of handling insurance transactions.
+### Welcome to the Insurance-Business-Services application, a comprehensive web-based architecture designed to revolutionize business tools and payment automation for VBAINS. This application serves as a pivotal solution for clients needing to access critical dates of insurance policies and streamlines the process of handling insurance transactions.
 
 ## Features
 
