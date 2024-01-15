@@ -46,9 +46,9 @@ function getConfig(apiName) {
          baseUrl: config[apiName].baseUrl,
          apiKey: config[apiName].apiKey,   
          environment: config.environment,
-         host: config.host,
-         user: config.user,
-         password: config.password
+         host: config[apiName].host,
+         user: config[apiName].user,
+         password: config[apiName].password
         };
     } else {
         throw new Error(`API ${apiName} was not found in configuration.`);

@@ -1,6 +1,8 @@
-const s = require('./systemCheck')
+//const s = require('./systemCheck')
 const sql = require('mssql')
 const d = require('../ARCHER/ARCHER-helper')
+const path = require('path');
+
 
 
 async function runARCHER() {
@@ -8,36 +10,40 @@ async function runARCHER() {
         const now = new Date(new Date().toLocaleString('en-US', options));
         const currentHour = now.getHours();
         const startHour = 5;  // 5:00 AM - Start Time
-        const endHour = 17;   // 5:00 PM - Last End Time to stay out of cycle
+        const endHour = 18;   // 5:00 PM - Last End Time to stay out of cycle
 
-            const systemCheck = require('../ARCHER/systemCheck')
+            //const systemCheck = require('../ARCHER/systemCheck')
 
 
     if (currentHour >= startHour && currentHour < endHour) {
         console.log("Executing task: " + now.toLocaleString());
-        try{
-            //await confirmation;
-            const systemStatus = await s.systemCheck();
-            console.log('Overall System Status:', systemStatus);
-            if(!systemStatus) {
-                console.log('LIPAS REST API is offline. Process Stopped');
-                process.exit(1);
+        //        try{
+        //            //await confirmation;
+        //            const systemStatus = await s.systemCheck();
+        //            console.log('Overall System Status:', systemStatus);
+        //            if(!systemStatus) {
+        //                console.log('LIPAS REST API is offline. Process Stopped');
+        //                process.exit(1);
 
-            } else {
-                const loanFolder = path.join(__dirname, 'SqlQueries/loan');
-                const premiumFolder = path.join(__dirname, 'SqlQueries/premium');
-                
-                await d.runAllQueriesInFolder( loanFolder , 1 ) //Executes the Entire Loan Service using helper agents
-                await d.runAllQueriesInFolder( premiumFolder, 2 )   //Executes the Entire Premium Service using helper agents
-                
-}
-        } catch (error) {
-            console.log('Error during system check:', error.message);
-            process.exit(1);
-        }
+        //            } else {
+        //                const loanFolder = path.join(__dirname, 'SqlQueries/loan');
+        //                const premiumFolder = path.join(__dirname, 'SqlQueries/premium-test');
+
+        //                //await d.runAllQueriesInFolder( loanFolder , 1 ) //Executes the Entire Loan Service using helper agents
+        //                await d.runAllQueriesInFolder( premiumFolder, 2 )   //Executes the Entire Premium Service using helper agents
+
+        //}
+        //        }
 
 
+        //catch (error) {
+        //    console.log('Error during system check:', error.message);
+        //    process.exit(1);
+        //}
 
+        const premiumFolder = path.join(__dirname, 'SqlQueries/premium-test');
+
+        await d.runAllQueriesInFolder( premiumFolder, 2 )
 
 
 
@@ -52,10 +58,10 @@ async function runARCHER() {
 
 
 
+runARCHER();
 
 
 
 
 
-
-module.export = runARCHER;
+//module.export = runARCHER;

@@ -18,8 +18,8 @@
         "apiKey": "MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE"
       },
       "sqlServer": {
-        "host": "localhost:1443",
-        "user": "VBAINS",
+        "host": "localhost",
+        "user": "ARCHER",
         "password": "1217"
       }
     },

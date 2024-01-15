@@ -2,9 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\Insurance-Services",
+    "\\Insurance-Services\\ARCHER",
+    "\\Insurance-Services\\ARCHER\\SqlQueries\\premium-test",
+    "\\Insurance-Services\\config\\configuration",
+    "\\Insurance-Services\\documentation",
+    "\\Insurance-Services\\documentation\\EXL LifePRO REST API",
     "\\Insurance-Services\\helper-services\\lipas-helper-api",
     "\\server"
   ],
-  "SelectedNode": "\\server\\Insurance-Business-Services.js",
+  "SelectedNode": "\\Insurance-Services\\documentation\\EXL LifePRO REST API",
   "PreviewInSolutionExplorer": false
 }

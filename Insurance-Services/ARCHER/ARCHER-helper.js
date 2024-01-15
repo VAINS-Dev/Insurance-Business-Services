@@ -6,12 +6,13 @@ const fs = require('fs');
 const path = require('path');
 
 
-const configurationLoader = require('../LIPAS_webServices/config/configLoader')
+const configurationLoader = require('../config/configLoader')
 const apiProductBaseUrl = configurationLoader.getConfig('ProductAPI').baseUrl;
 const apiPolicyBaseUrl = configurationLoader.getConfig('PolicyAPI').baseUrl;
+const apiPolicyKey = configurationLoader.getConfig('PolicyAPI').apiKey;
 const apiPartyBaseUrl  = configurationLoader.getConfig('PartyAPI').baseUrl;
 
-const apiToken = apiPolicyKey;
+const PolicyAPIToken = apiPolicyKey;
 
 
 //System Check Functionality
@@ -101,6 +102,61 @@ function generateGuid() {
     );
 }
 
+async function ARCHERLogPayment(PolicyNumber, ServiceType, SuspenseAmount, PaymentAmount, PriorLoanBalance, NewLoanBalance, PaymentStatus, PaymentDate, CurrPaidToDate, NewPaidToDate) {
+    const polNum = PolicyNumber;
+    const paymentCode = ServiceType;
+    const suspenseAmount = SuspenseAmount;
+    const paymentAmount = PaymentAmount;
+    const priorLoanBalance = PriorLoanBalance;
+    const newLoanBalance = NewLoanBalance;
+    const paymentStatus = PaymentStatus;
+    const paymentDate = PaymentDate;
+    const currPaidToDate = CurrPaidToDate;
+    const newPaidToDate = NewPaidToDate
+
+    if (ServiceType === 1) {
+        const insertQuery = `
+        INSERT INTO ARCHER_LoanPayments (PolicyNumber, PaymentCode, SuspenseAmount, PriorLoanBalance, NewLoanBalance, PaymentStatus, PaymentDate)
+        VALUES (@PolicyNumber, @PaymentCode, @SuspenseAmount, @PriorLoanBalance, @NewLoanBalance, @PaymentStatus, @PaymentDate)`;
+
+        await sql.query(insertQuery, {
+            PolicyNumber: polNum,
+            PaymentCode: paymentCode,
+            SuspenseAmount: suspenseAmount,
+            PaymentAmount: paymentAmount,
+            PriorLoanBalance: priorLoanBalance,
+            NewLoanBalance: newLoanBalance,
+            PaymentStatus: paymentStatus,
+            PaymentDate: paymentDate,
+        });
+
+    } else if (ServiceType === 2) {
+
+        const insertQuery = `
+        INSERT INTO ARCHER_PremiumPayments (PolicyNumber, PaymentCode, SuspenseAmount, PaymentAmount, CurrPaidToDate, NewPaidToDate, PaymentStatus, PaymentDate)
+        VALUES (@PolicyNumber, @PaymentCode, @SuspenseAmount, @PaymentAmount, @CurrPaidToDate, @NewPaidToDate, @PaymentStatus, @PaymentDate)
+    `;
+
+        await sql.query(insertQuery, {
+            PolicyNumber: polNum,
+            PaymentCode: paymentCode,
+            SuspenseAmount: suspenseAmount,
+            PaymentAmount: paymentAmount,
+            CurrPaidToDate: currPaidToDate,
+            NewPaidToDate: newPaidToDate,
+            PaymentStatus: paymentStatus,
+            PaymentDate: paymentDate,
+        });
+
+    } else {
+        console.error('Service Type not provided.')
+        return;
+    }
+}
+
+
+
+
 async function ARCHERProcessPremiumPayment(POLICY_NUMBER, AMOUNT, TAX_YEAR, PAYMENT_DATE) {
 
     const randomGuid = generateGuid();
@@ -138,7 +194,7 @@ async function ARCHERProcessPremiumPayment(POLICY_NUMBER, AMOUNT, TAX_YEAR, PAYM
                 'CoderID': 'API1',
                 'UserType': 'API1',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiToken}`
+                'Authorization': `Bearer ${PolicyAPIToken}`
             },
             body: JSON.stringify(requestBody)
         };
@@ -201,7 +257,7 @@ async function ARCHERProcessLoanPayment(POLICY_NUMBER, AMOUNT, TAX_YEAR, PAYMENT
                 'CoderID': 'API1',
                 'UserType': 'API1',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiToken}`
+                'Authorization': `Bearer ${PolicyAPIToken}`
             },
             body: JSON.stringify(requestBody)
         };
@@ -240,7 +296,7 @@ async function ARCHERValidatePayment(POLICY_NUMBER, ServiceType) {
                             'CoderId': 'DAD1',
                             'UserType': 'DAD1',
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiToken}`
+                            'Authorization': `Bearer ${PolicyAPIToken}`
                         }
                 }
                 try {
@@ -267,7 +323,7 @@ async function ARCHERValidatePayment(POLICY_NUMBER, ServiceType) {
                             'CoderId': 'DAD1',
                             'UserType': 'DAD1',
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiToken}`
+                            'Authorization': `Bearer ${PolicyAPIToken}`
                         }
                 }
                 try {
@@ -297,17 +353,17 @@ async function ARCHERValidatePayment(POLICY_NUMBER, ServiceType) {
 
 
 //Read SQL Server File in ARCHER/SqlQueries Folder
-async function readSqlFile(SQLFilePath) {
-
-    return new Promise((resolve, reject)=>{
-        fs.readFile(SQLFilePath, { encoding: 'utf-8' }, (err, data) => {
+function readSqlFile(filePath) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
                 reject(err);
-            } else {
-                resolve(data);
+                return;
             }
+            resolve(data);
         });
     });
+}
 /*
     Example SQL Usage:
     const filePath = path.join(__dirname, 'query.sql');
@@ -324,7 +380,6 @@ async function readSqlFile(SQLFilePath) {
 
 */
 
-}
 
 async function ARCHERDataRequest (SQLFilePath, ServiceType) {
 
@@ -336,26 +391,33 @@ async function ARCHERDataRequest (SQLFilePath, ServiceType) {
     const sqlConfig = {
         user: SqlUser,
         password: SqlPassword,
-        server: sqlHost, 
-        database: 'LIFEPRO'
+        server: `${sqlHost}`, 
+        database: 'ARCHER',
+        options: {
+            encrypt: true,
+            trustServerCertificate: true
+        }
     }
 
         async function executeQuery(SQLFilePath, ServiceType) {
             try{
                 await sql.connect(sqlConfig);
                 const readFileData = await readSqlFile(SQLFilePath)
-                const result = await sql.query`${readFileData}`;
+                const result = await sql.query(readFileData);
                 
                 // Processing each row in the result
-                result.recordset.forEach(row => {
+                result.recordset.forEach(async row => {
 
-
-                    //In this section we also want to create a function to log the results, there should either be two functions to save to specific
-                    //tables or the function should be dynamic with If/Else logic with saving data for the loan or premium services.
-                    if(ServiceType === 1){
-                        //insert loan services here
-                    } else if(ServiceType === 2){
-                        //insert premium services here
+                  //In this section we also want to create a function to log the results, there should either be two functions to save to specific
+                  //tables or the function should be dynamic with If/Else logic with saving data for the loan or premium services.
+                    if (ServiceType === 1) {
+                        await ARCHERProcessLoanPayment()
+                        await ARCHERValidatePayment(row.POLICY_NUMBER, ServiceType);  
+                        return;
+                    } else if (ServiceType === 2) {
+                        await ARCHERProcessPremiumPayment(row.POLICY_NUMBER, row.AMOUNT, row.TAX_YEAR, row.PAID_TO_DATE)
+                        await ARCHERValidatePayment(row.POLICY_NUMBER, ServiceType)
+                        return;
                     } else {
                         console.error('ServiceType was not provided.')
                     }
@@ -368,7 +430,7 @@ async function ARCHERDataRequest (SQLFilePath, ServiceType) {
             }
         }    
 
-        executeQuery();
+    executeQuery(SQLFilePath, ServiceType);
 
     }
 
@@ -385,23 +447,26 @@ async function ARCHERDataRequest (SQLFilePath, ServiceType) {
         });
     }
 
-    async function runAllQueriesInFolder(queryFolderPath , ServiceType) {
-        try {
-            const files = await readSqlFileDirectory(queryFolderPath);
-    
-            for (const file of files) {
-                const filePath = path.join(queryFolderPath, file);
-                const sqlQuery = await readSqlFile(filePath);
-                const results = await ARCHERDataRequest(sqlQuery, ServiceType);
+async function runAllQueriesInFolder(queryFolderPath, ServiceType) {
+    try {
+        const files = await readSqlFileDirectory(queryFolderPath);
+        let allResults = [];
+        for (const file of files) {
+            const filePath = path.join(queryFolderPath, file);
+            try {
+                const results = await ARCHERDataRequest(filePath, ServiceType);
+                allResults.push({ file, results }); // Add results to the array
                 console.log(`Results for ${file}:`, results);
-                // Additional processing here
-            }
-    
-        } catch (err) {
-            console.error(err);
+            } catch (err) {
+                console.error(`Error processing file ${file}:`, err);
+            } 
         }
-    }
 
+        return allResults; // Return aggregated results after processing all files
+    } catch (err) {
+        console.error('Error reading SQL file directory:', err);
+    }
+}
 
 
 
@@ -411,7 +476,7 @@ async function ARCHERDataRequest (SQLFilePath, ServiceType) {
 //Loan Accrual Date (YYYYmmDD) <= currentDate
 
 
-
+function LoanPaymentValidation(AccrualDate,)
 
 
 
