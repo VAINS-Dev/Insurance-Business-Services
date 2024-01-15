@@ -1,0 +1,76 @@
+Description:The UpdatePolicy web service allows updates to certain fields such as delivery date, tax codes, loan repayment information, and Client ID of a policy based on the company code and policy number provided.
+
+Modified in- V20 -SP3
+
+Contract Changes - Added SensitiveAccessLevel field in Request class.
+
+Method: PUT
+
+Endpoint: /LPRestPolicyAPI/v3/Policy/{GUID}/UpdatePolicy
+
+Request Header:
+{
+  "UpdatePolicyInput": {
+    "ARBillDay": 0,
+    "ActualBillDate": 0,
+    "AdjustmentBillingFlag": "string",
+    "BillCode": "string",
+    "ClientIDNumber": "string",
+    "CompanyCode": "string",
+    "CouponAnnuityFlag": "string",
+    "CouponLoanFlag": "string",
+    "CouponPolicyFlag": "string",
+    "DeliveryDate": 0,
+    "FederalCertifyCode": "string",
+    "FederalCertifyDate": 0,
+    "FederalWithholdCode": "string",
+    "IssueCoder": "string",
+    "LapseOverrideID": "string",
+    "LapseOverrideStartDate": 0,
+    "LapseOverrideEndDate": 0,
+    "LoanBillDay": 0,
+    "LoanPACMonth": 0,
+    "LoanPACYear": 0,
+    "LoanRepaymentAmount": 0,
+    "LoanRepaymentDate": 0,
+    "LoanRepaymentForm": "string",
+    "LoanRepaymentMode": 0,
+    "LoanSpecialMode": "string",
+    "PolicyBillDay": 0,
+    "PolicyNumber": "string",
+    "SensitiveAccessLevel": 0,
+    "TaxCodeOverride": "string",
+    "TaxQualifyCode": "string",
+    "FinancialRptCode": "string"
+  }
+}
+
+
+Response Header:
+
+Success 200
+{
+  "UpdatePolicyResult": {
+    "GUID": "string",
+    "ReturnCode": 0,
+    "Message": "string",
+    "FieldErrors": [
+      {
+        "FieldErrorCode": 0,
+        "FieldErrorMessage": "string",
+        "FieldIDInError": "string"
+      }
+    ]
+  }
+}
+
+Bad Request 400
+
+{
+  "ReturnCode": 0,
+  "MessageInfo": [
+    {
+      "Message": "string"
+    }
+  ]
+}

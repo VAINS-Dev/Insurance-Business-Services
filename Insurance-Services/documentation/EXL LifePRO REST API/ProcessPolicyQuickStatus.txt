@@ -1,0 +1,92 @@
+Description: The ProcessPolicyQuickStatus service retrieves policy information including policy number, line of business, product ID, contract status, billing information, and tax information based on criteria selected such as policy number, dividend option, billing information, number of benefits, and policy dates.
+
+METHOD: POST
+
+Endpoint: /LPRestPolicyAPI/v1/Policy/ProcessPolicyQuickStatus
+
+
+Request Header:
+{
+  "GUID": "string",
+  "CompanyCode": "string",
+  "PolicyNumber": "string",
+  "LineOfBusiness": "string",
+  "ContractCode": "string",
+  "ContractReason": "string",
+  "ContractDateFrom": 0,
+  "ContractDateTo": 0,
+  "BillingCode": "string",
+  "BillingReason": "string",
+  "FederalWithHoldCode": "string",
+  "FederalCertifyCode": "string",
+  "ProductCode": "string",
+  "TotalBenefitCount": 0,
+  "LoanAttached": "string",
+  "IssueDateFrom": 0,
+  "IssueDateTo": 0,
+  "PaidToFrom": 0,
+  "PaidToTo": 0,
+  "BillingForm": "string",
+  "BillingMode": "string",
+  "UlMPRDateFrom": 0,
+  "UlMPRDateTo": 0,
+  "AnnuitiesAttached": "string",
+  "ActualBillDateFrom": 0,
+  "ActualBillDateTo": 0,
+  "GroupNumber": "string",
+  "ModePremiumFrom": 0,
+  "ModePremiumTo": 0,
+  "TaxQualifyCode": "string",
+  "Dividend": "string",
+  "ResidentialState": "string",
+  "PaidUpType": "string",
+  "AnnualPremium": "string",
+  "AnnualPremiumFrom": 0,
+  "AnnualPremiumTo": 0
+}
+
+Response: 
+
+Success - 200:
+{
+  "GUID": "string",
+  "ReturnCode": 0,
+  "Message": "string",
+  "PolicyQuickData": [
+    {
+      "CompanyCode": "string",
+      "PolicyNumber": "string",
+      "LineOfBusiness": "string",
+      "ContractCode": "string",
+      "ContractReason": "string",
+      "BillingReason": "string",
+      "BillingCode": "string",
+      "ProductCode": "string",
+      "TotalbenefitCount": 0,
+      "FederalWithHoldCode": "string",
+      "FederalCertifyCode": "string",
+      "CouponLoanFlag": "string",
+      "IssueDate": 0,
+      "PaidToDate": 0,
+      "BillingForm": "string",
+      "BillingMode": 0,
+      "UlMPRDate": 0,
+      "CouponAnnuityFlag": "string",
+      "ModePremium": 0,
+      "ActualBillDate": 0,
+      "AnnualPremium": 0,
+      "GroupNumber": "string"
+    }
+  ]
+}
+
+Bad Request: 400:
+
+{
+  "ReturnCode": 0,
+  "MessageInfo": [
+    {
+      "Message": "string"
+    }
+  ]
+}

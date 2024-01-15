@@ -14,10 +14,6 @@ const apiPartyBaseUrl  = configurationLoader.getConfig('PartyAPI').baseUrl;
 const apiToken = apiPolicyKey;
 
 
-
-
-
-
 //System Check Functionality
 async function checkApiStatus(apiName, apiUrl) {
     try {
@@ -35,23 +31,24 @@ async function checkApiStatus(apiName, apiUrl) {
         return `\x1b[31mOffline\x1b[0m`;
     }
 };
-    async function systemCheck() {
-        const definitions = [
-            { name: 'PartyAPI' , url: apiPartyBaseUrl },
-            { name: 'PolicyAPI', url: apiPolicyBaseUrl },
-            { name: 'ProductAPI', url: apiProductBaseUrl }
-        ]
-        console.log('Starting API uptime check....')
-        let isSystemOnline = true;
-        
-        for (const { name, url } of definitions) {
-            const apiStatus = await checkApiStatus(name, url);
-            isSystemOnline = isSystemOnline && apiStatus;
-        }
-        console.log('System Check Complete.')
-        console.clear();
-        return isSystemOnline;
-    };
+async function systemCheck() {
+    const definitions = [
+        { name: 'PartyAPI' , url: apiPartyBaseUrl },
+        { name: 'PolicyAPI', url: apiPolicyBaseUrl },
+        { name: 'ProductAPI', url: apiProductBaseUrl }
+    ]
+    console.log('Starting API uptime check....')
+    let isSystemOnline = true;
+    
+    for (const { name, url } of definitions) {
+        const apiStatus = await checkApiStatus(name, url);
+        isSystemOnline = isSystemOnline && apiStatus;
+    }
+    console.log('System Check Complete.')
+    console.clear();
+    return isSystemOnline;
+};
+
 
 function parseDateString(dateString) {
     if (dateString.length !== 8) {
@@ -228,6 +225,77 @@ async function ARCHERProcessLoanPayment(POLICY_NUMBER, AMOUNT, TAX_YEAR, PAYMENT
 }
 
 
+async function ARCHERValidatePayment(POLICY_NUMBER, ServiceType) {
+    const GUID = generateGuid();
+    const CompanyCode = '01'
+    const PolicyNumber = POLICY_NUMBER
+    
+    if( ServiceType === 1 ){
+            //Service to Return loan related inforamtion when the ServiceType is Loan
+                const GetAllLoanListEndPoint = `/LPRestPolicyAPI/v1/Loan/${GUID}/${CompanyCode}/${PolicyNumber}/GetAllLoanList`
+                const GetAllLoanListAPI = apiPolicyBaseUrl+GetAllLoanListEndPoint
+                const requestOptions = {
+                    method: 'GET',
+                        headers: {
+                            'CoderId': 'DAD1',
+                            'UserType': 'DAD1',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiToken}`
+                        }
+                }
+                try {
+                    const getResponse = await fetch(GetAllLoanListAPI, requestOptions);
+                    const getResponseData = await getResponse.json(); 
+                    const getResponseReturnCode = getResponseData.ReturnCode; 
+                    if (getResponseReturnCode === 0) {
+                        const activeLoan = getActiveLoan(getResponseData)
+                        return activeLoan
+                    } else {
+                        console.error('Error sending data request to GetAllLoanList API.');
+                    }
+                } catch (error) {
+                    console.error('Error sending data to API:', error);
+                    throw error;
+                } 
+    }else if( ServiceType === 2 ) {
+            //Service to Return policy related inforamtion when the ServiceType is Premium
+                const getPolicyEndpoint = `Endpoint: /LPRestPolicyAPI/v4/Policy/${GUID}/${CompanyCode}/${PolicyNumber}/GetPolicy`
+                const GetPolicyAPI = apiPolicyBaseUrl+getPolicyEndpoint
+                const requestOptions = {
+                    method: 'GET',
+                        headers: {
+                            'CoderId': 'DAD1',
+                            'UserType': 'DAD1',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiToken}`
+                        }
+                }
+                try {
+                    const getPolicyResponse = await fetch(GetPolicyAPI, requestOptions);
+                    const getPolicyResponseData = await getPolicyResponse.json();
+                    const getPolicyReturnCode = getPolicyResponseData.ReturnCode;
+
+                    if(getPolicyReturnCode === 0){
+                        const Paid_to_date = getPolicyResponseData.GetPolicyResp.Paid_To_Date;
+                        const PolicyNumber = getPolicyResponseData.GetPolicyResp.PolicyNumber;
+                        const ProductCode = getPolicyResponseData.GetPolicyResp.Product_Code;
+                        return { Paid_to_date , PolicyNumber , ProductCode };
+                    } else {
+                        console.error('Error sending data to GETPOLICY API.')
+                    }
+                } catch(error){
+                    console.error('Error sending data to GETPOLICY API: ', error);
+                    throw error;
+                }
+    }
+    //Inner-Support Function to Get the Active Loan List out of all Objects/Array.
+    function getActiveLoan(AllLoanList){
+        return AllLoanList.find(loan => loan.StatusCode === "A")
+    }
+
+}
+
+
 //Read SQL Server File in ARCHER/SqlQueries Folder
 async function readSqlFile(SQLFilePath) {
 
@@ -348,5 +416,5 @@ async function ARCHERDataRequest (SQLFilePath, ServiceType) {
 
 
 
-module.exports = { systemCheck, generateGuid, ARCHERProcessPremiumPayment , ARCHERProcessLoanPayment , readSqlFile , runAllQueriesInFolder };
+module.exports = { systemCheck, generateGuid, ARCHERProcessPremiumPayment , ARCHERProcessLoanPayment , ARCHERValidatePayment , readSqlFile , runAllQueriesInFolder };
 

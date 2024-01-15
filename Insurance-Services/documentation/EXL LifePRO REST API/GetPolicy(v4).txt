@@ -1,0 +1,154 @@
+Description:The GetPolicy REST web service retrieves policy specific data such as policy code, line of business, premium information, billing information, tax certification information, policy dates, status codes and reasons based on company code and policy number.
+
+Modified in- V20 -SP4
+
+Contract Changes - Added Paid_To_Date_Not_Waived field in Response class.
+
+
+
+METHOD: GET
+
+Endpoint: /LPRestPolicyAPI/v4/Policy/{GUID}/{CompanyCode}/{PolicyNumber}/GetPolicy
+
+Response Header:
+
+Success-200
+{
+  "GetPolicyResult": {
+    "GUID": "string",
+    "ReturnCode": 0,
+    "Message": "string",
+    "GetPolicyResp": [
+      {
+        "Company_Code": "string",
+        "Policy_Number": "string",
+        "Coupon_Policy_Flag": "string",
+        "Coupon_ANN_Flag": "string",
+        "Coupon_Loan_Flag": "string",
+        "Policy_Code": "string",
+        "Line_Of_Business": "string",
+        "Product_Code": "string",
+        "Total_Ben_Count": "string",
+        "Total_Loan_Count": "string",
+        "Last_Change_Date": "string",
+        "Last_Change_Time": "string",
+        "Last_Change_Oper": "string",
+        "Misc_Billing_IND": "string",
+        "UL_Premium_Type": "string",
+        "Last_Sys_Act_Date": "string",
+        "Last_Sys_Act_Code": "string",
+        "Contract_Code": "string",
+        "Contract_Reason": "string",
+        "Contract_Date": "string",
+        "Billing_Code": "string",
+        "Billing_Reason": "string",
+        "Billing_Date": "string",
+        "Payment_Code": "string",
+        "Payment_Reason": "string",
+        "Payment_Date": "string",
+        "Policy_Bill_Day": "string",
+        "Loan_Bill_Day": "string",
+        "AR_Bill_Day": "string",
+        "Second_Bill_Day": "string",
+        "AR_Benefit_Seq": "string",
+        "PMT_Since_Last_MPR": "string",
+        "TAMRA_MEC_Flag": "string",
+        "Bill_Code": "string",
+        "Issue_Date": "string",
+        "Application_Date": "string",
+        "APP_Received_Date": "string",
+        "Issue_State": "string",
+        "Res_State": "string",
+        "County_Code": "string",
+        "Zip": "string",
+        "Zip_Ext": "string",
+        "Actual_Bill_Date": "string",
+        "Billing_Mode": "string",
+        "Billing_Form": "string",
+        "Billed_To_Date": "string",
+        "Paid_To_Date": "string",
+        "Paid_To_Date_Not_Waived": "string",
+        "Group_Number": "string",
+        "Mode_Premium": "string",
+        "Annual_Premium": "string",
+        "Loan_Repmt_Date": "string",
+        "Loan_Repmt_Mode": "string",
+        "Loan_Repmt_Form": "string",
+        "Loan_Repmt_Amount": "string",
+        "ACTG_Block_IND": "string",
+        "IBA_Code": "string",
+        "Conversion_Flag": "string",
+        "Policy_Fee": "string",
+        "Polc_Special_Mode": "string",
+        "Tax_Qualify_Code": "string",
+        "FED_Withhold_Code": "string",
+        "FED_Certify_Code": "string",
+        "ADJ_Bill_Flag": "string",
+        "Delivery_Date": "string",
+        "Withdraw_INT_Flag": "string",
+        "Override_Flag": "string",
+        "FED_Certify_Date": "string",
+        "STA_Withhold_Code": "string",
+        "Allctd_CVRG_Code": "string",
+        "Premium_Commitment": "string",
+        "Group_Proc_Date": "string",
+        "State_Tax_Person": "string",
+        "Coll_Advance_PTD": "string",
+        "Multiple_Insur": "string",
+        "Policy_Currency": "string",
+        "Primary_Person": "string",
+        "PREM_PCT_Mult": "string",
+        "Paid_UP_Type": "string",
+        "Policy_PAC": "string",
+        "Annuity_PAC": "string",
+        "Loan_Repay_PAC": "string",
+        "ANN_Special_Mode": "string",
+        "Loan_Special_Mode": "string",
+        "City_Code": "string",
+        "UL_MPR_Date": "string",
+        "Case_Number": "string",
+        "OFF_ANNV_PD_TO_Day": "string",
+        "ORIG_OFF_ANNV_Day": "string",
+        "Loan_PAC_Month": "string",
+        "Loan_PAC_Year": "string",
+        "MEC_Reason": "string",
+        "MEC_EFF_Date": "string",
+        "Designated_ROTH": "string",
+        "Client_ID": "string",
+        "Lives_Covered": "string",
+        "Tax_Code_Override": "string",
+        "Claim_Status": "string",
+        "Claim_Status_Date": "string",
+        "Claim_Settlemnt_DT": "string",
+        "SubContract_Type": "string",
+        "Continuatin_EFF_DT": "string",
+        "POLC_UPD_Count": "string",
+        "Mature_Expire_Date": "string",
+        "Issue_Age": "string",
+        "Plan_Code": "string",
+        "Dividend": "string",
+        "BF_Last_Val_Date": "string",
+        "Description": "string",
+        "UD_Billing_Reason": "string",
+        "UD_Payment_Reason": "string",
+        "Cancel_Reason": "string",
+        "ProcessedToDate": "string",
+        "SensitiveAccessLevel": 0,
+        "LapseOverrideID": "string",
+        "LapseOverrideStartDate": 0,
+        "LapseOverrideEndDate": 0
+      }
+    ]
+  }
+}
+
+BadRequest-400
+
+{
+  "ReturnCode": 0,
+  "MessageInfo": [
+    {
+      "Message": "string"
+    }
+  ]
+}

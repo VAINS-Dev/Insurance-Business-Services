@@ -1,4 +1,4 @@
-const systemCheck = require('./systemCheck')
+const s = require('./systemCheck')
 const sql = require('mssql')
 const d = require('../ARCHER/ARCHER-helper')
 
@@ -17,7 +17,7 @@ async function runARCHER() {
         console.log("Executing task: " + now.toLocaleString());
         try{
             //await confirmation;
-            const systemStatus = await systemCheck();
+            const systemStatus = await s.systemCheck();
             console.log('Overall System Status:', systemStatus);
             if(!systemStatus) {
                 console.log('LIPAS REST API is offline. Process Stopped');

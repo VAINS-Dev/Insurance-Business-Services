@@ -1,0 +1,36 @@
+Description: The UpdatePRMPDetails REST web service updates custom parameters on a policy based on the given company code, policy number, Allowable Value ID, Parameter Definition ID, and Parameter Value.
+
+METHOD: PUT
+
+EndPoint: /LPRestPolicyAPI/v2/PolicyCustomParameter/{GUID}/UpdatePRMPDetails
+
+Request header:
+{
+  "CompanyCode": "string",
+  "PolicyNumber": "string",
+  "AllowableValueId": 0,
+  "ParamValue": "string",
+  "ParamDefinitionId": 0
+}
+
+
+
+Response Header:
+
+Success-200
+{
+  "GUID": "string",
+  "ReturnCode": 0,
+  "Message": "string",
+  "UpdatedOnTime": "string"
+}
+
+Bad Request-400
+{
+  "ReturnCode": 0,
+  "MessageInfo": [
+    {
+      "Message": "string"
+    }
+  ]
+}
