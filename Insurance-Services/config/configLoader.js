@@ -8,6 +8,8 @@ function loadConfig() {
     const config = JSON.parse(configData);
 
     const environment = config.envfeatureSwitch.preprodEnabled ? 'preprod' : 'prod';
+    const sqlLoggingEnabled = config.loggingFeatureSwitch.sqlLoggingEnabled;
+    const sqlReadEnabled = config.dataReadFeatureSwitch.sqlDataReadEnabled;
     const environmentConfig = config.environment[environment];
 
     const ProductAPI = {
@@ -32,6 +34,8 @@ function loadConfig() {
 
     return {
         environment,
+        sqlLoggingEnabled,
+        sqlReadEnabled,
         ProductAPI,
         PartyAPI,
         PolicyAPI,

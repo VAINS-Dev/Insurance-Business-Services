@@ -30,7 +30,7 @@ app.use(setRequestTimeout);
 const loadConfig = require('../Insurance-Services/config/configLoader')
 
 const BA = require('../Insurance-Services/helper-services/helper')
-
+//This Service is utilized internally and is linked to the EXL LifePRO BenefitService
 app.get('/INSBusinessServiceAPI/evaluatePolicy/getBenefitDetails/:policyNumber', async (req, res, timeout) => {
         try {
             const policyNumber = req.params.policyNumber;
@@ -94,7 +94,7 @@ app.get('/INSBusinessServiceAPI/evaluatePolicy/evaluateCriticalDates/:policyNumb
     }
 });
 
-//const runArcher = require('../Insurance-Services/ARCHER/ARCHER-framework')
+//const runArcher = require('../Insurance-Services/ARCHER/ARCHER')
 
 
 //ARCHER FrameWork Initiation:

@@ -10,7 +10,8 @@ const configurationLoader = require('../config/configLoader')
 const apiProductBaseUrl = configurationLoader.getConfig('ProductAPI').baseUrl;
 const apiPolicyBaseUrl = configurationLoader.getConfig('PolicyAPI').baseUrl;
 const apiPolicyKey = configurationLoader.getConfig('PolicyAPI').apiKey;
-const apiPartyBaseUrl  = configurationLoader.getConfig('PartyAPI').baseUrl;
+const apiPartyBaseUrl = configurationLoader.getConfig('PartyAPI').baseUrl;
+const sqlLoggerEnabled = configurationLoader.loadConfig.sqlLoggerEnabled
 
 const PolicyAPIToken = apiPolicyKey;
 
@@ -26,6 +27,7 @@ async function checkApiStatus(apiName, apiUrl) {
         } else {
             console.error(`${apiName} is offline or unresponsive. Status Code: ${response.status}`)
             return `\x1b[31mOffline\x1b[0m`;
+            process.exit(1);
         }
     } catch(error) {
         console.error(`Error checking ${apiName} status,`, error.message);
@@ -102,6 +104,7 @@ function generateGuid() {
     );
 }
 
+//This will be for SQL logging
 async function ARCHERLogPayment(PolicyNumber, ServiceType, SuspenseAmount, PaymentAmount, PriorLoanBalance, NewLoanBalance, PaymentStatus, PaymentDate, CurrPaidToDate, NewPaidToDate) {
     const polNum = PolicyNumber;
     const paymentCode = ServiceType;
@@ -114,40 +117,42 @@ async function ARCHERLogPayment(PolicyNumber, ServiceType, SuspenseAmount, Payme
     const currPaidToDate = CurrPaidToDate;
     const newPaidToDate = NewPaidToDate
 
-    if (ServiceType === 1) {
-        const insertQuery = `
+
+    if (sqlLoggerEnabled === true) {
+        if (ServiceType === 1) {
+            const insertQuery = `
         INSERT INTO ARCHER_LoanPayments (PolicyNumber, PaymentCode, SuspenseAmount, PriorLoanBalance, NewLoanBalance, PaymentStatus, PaymentDate)
         VALUES (@PolicyNumber, @PaymentCode, @SuspenseAmount, @PriorLoanBalance, @NewLoanBalance, @PaymentStatus, @PaymentDate)`;
 
-        await sql.query(insertQuery, {
-            PolicyNumber: polNum,
-            PaymentCode: paymentCode,
-            SuspenseAmount: suspenseAmount,
-            PaymentAmount: paymentAmount,
-            PriorLoanBalance: priorLoanBalance,
-            NewLoanBalance: newLoanBalance,
-            PaymentStatus: paymentStatus,
-            PaymentDate: paymentDate,
-        });
-
-    } else if (ServiceType === 2) {
-
-        const insertQuery = `
+            await sql.query(insertQuery, {
+                PolicyNumber: polNum,
+                PaymentCode: paymentCode,
+                SuspenseAmount: suspenseAmount,
+                PaymentAmount: paymentAmount,
+                PriorLoanBalance: priorLoanBalance,
+                NewLoanBalance: newLoanBalance,
+                PaymentStatus: paymentStatus,
+                PaymentDate: paymentDate,
+            });
+        } else if (ServiceType === 2) {
+            const insertQuery = `
         INSERT INTO ARCHER_PremiumPayments (PolicyNumber, PaymentCode, SuspenseAmount, PaymentAmount, CurrPaidToDate, NewPaidToDate, PaymentStatus, PaymentDate)
         VALUES (@PolicyNumber, @PaymentCode, @SuspenseAmount, @PaymentAmount, @CurrPaidToDate, @NewPaidToDate, @PaymentStatus, @PaymentDate)
     `;
+            await sql.query(insertQuery, {
+                PolicyNumber: polNum,
+                PaymentCode: paymentCode,
+                SuspenseAmount: suspenseAmount,
+                PaymentAmount: paymentAmount,
+                CurrPaidToDate: currPaidToDate,
+                NewPaidToDate: newPaidToDate,
+                PaymentStatus: paymentStatus,
+                PaymentDate: paymentDate,
+            });
+        }
 
-        await sql.query(insertQuery, {
-            PolicyNumber: polNum,
-            PaymentCode: paymentCode,
-            SuspenseAmount: suspenseAmount,
-            PaymentAmount: paymentAmount,
-            CurrPaidToDate: currPaidToDate,
-            NewPaidToDate: newPaidToDate,
-            PaymentStatus: paymentStatus,
-            PaymentDate: paymentDate,
-        });
-
+    } else if (sqlLoggerEnabled === false) {
+        //This will be used for File Driven logging.
     } else {
         console.error('Service Type not provided.')
         return;
@@ -224,33 +229,20 @@ async function ARCHERProcessLoanPayment(POLICY_NUMBER, AMOUNT, TAX_YEAR, PAYMENT
     const processLoanPaymentEndPoint = `/v3/Policy/${randomGuid}/ProcessPayments`;
 
     const requestBody = {
-        //Need to make adjustments in here when I have payload information
-        //@Drew-Schnabel
-        //Make these changes on tuesday if Node.Js is avaialble.
+        //Updates made 2024-01-17 - @Drew-Schnabel
+        //Utilized Documentation ProcessPayments(V3) EXL LifePRO Swagger
         "ApplySuspenseFrom": "U",
         "CompanyCode": "01",
+        "LoanConfirm": true,
+        "LoanPaymentDate": PAYMENT_DATE,
+        "LoanRepay": AMOUNT,
         "PolicyNumber": POLICY_NUMBER,
-        "PremiumDetails": [
-          {
-            "Amount": AMOUNT,
-            "CommissionType": "N",
-            "Confirm": false,
-            "Load": "N",
-            "OriginalCode": "S",
-            "PayCommission": "Y",
-            "PremiumTax": "N",
-            "TaxYear": TAX_YEAR,
-            "TranCode": 110
-          }
-        ],
-        "PremiumPaymentDate": PAYMENT_DATE,
         "UpdatePaidToDate": false,
-        "WaiveApplicationFee": true,
-};
-    const loanAPI = apiPolicyBaseUrl+processLoanPaymentEndPoint
+    };
+    const loanAPI = apiPolicyBaseUrl + processLoanPaymentEndPoint
 
-    async function ARCHERSendProcessLoanPayment(requestBody){
-    
+    async function ARCHERSendProcessLoanPayment(requestBody) {
+
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -261,23 +253,36 @@ async function ARCHERProcessLoanPayment(POLICY_NUMBER, AMOUNT, TAX_YEAR, PAYMENT
             },
             body: JSON.stringify(requestBody)
         };
-            try {
+        try {
 
-                const response = await fetch(loanAPI,requestOptions)
-                const responseData = await response.json();
-                const responseCode = response.status;
+            const response = await fetch(loanAPI, requestOptions)
+            const responseData = await response.json();
+            const responseCode = response.status;
 
-                return { responseData, responseCode }
+            return { responseData, responseCode }
 
-            } catch (error) {
-                console.error('Error sending data to EXL LifePRO Premium REST API: ', error)
-                throw error;
-            }
+        } catch (error) {
+            console.error('Error sending data to EXL LifePRO Premium REST API: ', error)
+            throw error;
         }
+    }
 
+    //Loan Logic - @Drew-Schnabel
+    const validateLoan = await ARCHERValidatePayment(POLICY_NUMBER, 1);
+    const loanAccrual = validateLoan.AllLoans.AccrualDate;
+    const currentDate = new Date()
+    const formatDate = formatDateToyyyyMMdd(currentDate);
+    if (loanAccrual > currentDate) {
+        throw new Error('Loan Accrual Date in Advance of Current Date. Failed Business Rule!')
+    } else if (PAYMENT_DATE < loanAccrual) {
+        throw new Error('Payment Date in arrears to current loan accrual date. Failed Business Rule!');
+    } else if (!validateLoan) {
+        throw new Error('Loan Validation failed. Failed Business Rule!');
+    } else {
         const { responseData, responseCode } = await ARCHERSendProcessLoanPayment(requestBody);
         //Return response data and response code back to main framework.
         return { responseData, responseCode }
+    }
 }
 
 
@@ -445,7 +450,19 @@ async function ARCHERDataRequest (SQLFilePath, ServiceType) {
                 resolve(files.filter(file => file.endsWith('.sql')));
             });
         });
-    }
+}
+
+function readJSONFileDirectory(directory) {
+    return new Promise((resolve, reject) => {
+        fs.readdir(directory, (err, files) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(files.filter(file => file.endsWith('.json')));
+        });
+    });
+}
 
 async function runAllQueriesInFolder(queryFolderPath, ServiceType) {
     try {
@@ -468,18 +485,79 @@ async function runAllQueriesInFolder(queryFolderPath, ServiceType) {
     }
 }
 
+const config = require('../config/configLoader')
+async function readFolderResults(folderPath, ServiceType) {
+    try {
+        if (config.sqlReadEnabled === true) {
+            const files = await readSqlFileDirectory(folderPath);
+            let allResults = [];
+            for (const file of files) {
+                const filePath = path.join(folderPath, file);
+                const results = await fs.readFile(filePath);
+                allResults.push({ file, results });
+                console.log('File Concate/Read completed.')
+            }
+        } else if (config.sqlReadEnabled === false) {
+            const files = await readJSONFileDirectory(folderPath);
+            let allResults = [];
+            for (const file of files) {
+                const filePath = path.join(folderPath, file);
+                const results = await fs.readFile(filePath, 'utf-8');
+                allResults.push({ file, results });
+                console.log('File Concate/Read completed.')
+            }
+        } else {
+            console.error('Invalid/Miss Matched Configuration. Please review configuration file.')
+        }
+        return allResults; //Return aggregated results after processing all files in folder
+
+        } catch (err) {
+            console.error('Error Reading file directory: ', err);
+            }
+}
 
 
-//Still Need Loan Logic, we need to use the GetAllLoanList service to find the current Loan Accrual date. The Accrual Date CANNOT be in advance
-//of the current date. Will need to use GETDATE() then convert GETDATE to YYYYmmDD format We should be able to do a simple 
-//const currentDate = formatDateToyyyyMMdd(getDate());
-//Loan Accrual Date (YYYYmmDD) <= currentDate
+async function moveFilesToCompletedFolder(sourceDir, destDir) {
+    try {
+        const files = await fs.promises.readdir(sourceDir);
+
+        for (const file of files) {
+            const oldPath = path.join(sourceDir, file);
+            const newPath = path.join(destDir, file);
+            await fs.promises.rename(oldPath, newPath);
+            console.log(`Successfully moved file: ${file}`);
+        }
+        console.log('All files moved successfully.');
+    } catch (err) {
+        console.error('Error moving files:', err);
+    }
+}
 
 
-function LoanPaymentValidation(AccrualDate,)
+function formatDate(date) {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    return date.toLocaleDateString('en-US', options).replace(/\//g, '-').replace(',', '').replace(/:/g, '-').replace(' ', ' ');
+}
+
+async function appendDateTimeToFiles(directory) {
+    try {
+        const files = await fs.promises.readdir(directory);
+
+        for (const file of files) {
+            const oldPath = path.join(directory, file);
+            const dateTimeString = formatDate(new Date());
+            const fileExtension = path.extname(file);
+            const fileNameWithoutExtension = path.basename(file, fileExtension);
+            const newPath = path.join(directory, `${fileNameWithoutExtension}-Processed ${dateTimeString}${fileExtension}`);
+
+            await fs.promises.rename(oldPath, newPath);
+            console.log(`Renamed file: ${file} to ${path.basename(newPath)}`);
+        }
+    } catch (err) {
+        console.error('Error renaming files:', err);
+    }
+}
 
 
-
-
-module.exports = { systemCheck, generateGuid, ARCHERProcessPremiumPayment , ARCHERProcessLoanPayment , ARCHERValidatePayment , readSqlFile , runAllQueriesInFolder };
+module.exports = { appendDateTimeToFiles , moveFilesToCompletedFolder , readFolderResults , systemCheck, generateGuid, ARCHERProcessPremiumPayment , ARCHERProcessLoanPayment , ARCHERValidatePayment , readSqlFile , runAllQueriesInFolder };
 

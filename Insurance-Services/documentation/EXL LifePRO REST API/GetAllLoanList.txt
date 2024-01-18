@@ -1,4 +1,4 @@
-Description: The GetAllLoanList REST service retrieves all loan details of a policy such as Loan Type, Interest Rate, Status code, based on the given company code and policy number.
+LoaDescription: The GetAllLoanList REST service retrieves all loan details of a policy such as Loan Type, Interest Rate, Status code, based on the given company code and policy number.
 
 METHOD: GET
 

@@ -4,12 +4,13 @@
     "\\Insurance-Services",
     "\\Insurance-Services\\ARCHER",
     "\\Insurance-Services\\ARCHER\\SqlQueries\\premium-test",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.log",
+    "\\Insurance-Services\\config",
     "\\Insurance-Services\\config\\configuration",
-    "\\Insurance-Services\\documentation",
     "\\Insurance-Services\\documentation\\EXL LifePRO REST API",
-    "\\Insurance-Services\\helper-services\\lipas-helper-api",
     "\\server"
   ],
-  "SelectedNode": "\\Insurance-Services\\documentation\\EXL LifePRO REST API",
+  "SelectedNode": "\\server\\Insurance-Business-Services.js",
   "PreviewInSolutionExplorer": false
 }
