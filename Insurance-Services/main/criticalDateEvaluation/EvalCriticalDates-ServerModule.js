@@ -16,7 +16,7 @@ function reformatDate(yyyyMMddDate) {
     const month = yyyyMMddDate.substring(4, 6);
     const day = yyyyMMddDate.substring(6, 8);
     return `${month}-${day}-${year}`;
-}
+};
 
 function parseDateString(dateString) {
     if (dateString.length !== 8) {
@@ -59,6 +59,10 @@ async function getSurrenderQuote(policyNumber, surrenderDate) {
 
     try {
         const surrQuoteResponse = await fetch(surrQuoteApiUrl, requestOptions);
+        if(surrQuoteResponse.status===417){ //If the service has an "Expectation Failure" then we handle the error by notifying the client application
+            const returnMessage = surrQuoteResponse.MessageInfo[0].Message
+            throw new Error(`Surrender quote response is null or does not have a result for ${policyNumber}. ${returnMsg}`);
+        } 
         const surrQuoteResponseData = await surrQuoteResponse.json();
         const surrQuoteResponseResult = surrQuoteResponseData.SurrenderQuoteResult;
 
@@ -68,8 +72,9 @@ async function getSurrenderQuote(policyNumber, surrenderDate) {
 
 
         //console.log(`Policy: ${policyNumber} - Surrender quote response:`, surrQuoteResponseData);
+ 
 
-        if (!surrQuoteResponseData || surrQuoteResponseData.SurrenderQuoteResult === null || surrQuoteResponseCode !== 0) {
+       if (!surrQuoteResponseData || surrQuoteResponseData.SurrenderQuoteResult === null || surrQuoteResponseCode !== 0 ) {
             throw new Error(`Surrender quote response is null or does not have SurrenderQuoteResult for policy ${policyNumber} at date ${surrenderDate}`);
         }
         const totalCV = surrQuoteResponseResult.CashValues.CashValue + surrQuoteResponseResult.CashValues.CashValuePUA
@@ -94,10 +99,15 @@ async function getSurrenderQuote(policyNumber, surrenderDate) {
             cV: surrQuoteResponseResult.CashValues.CashValue,
             lI: surrQuoteResponseResult.Loan.LoanBalance
             //This above update takes into consideration only cash value + loan balances, it removes the unapplied cash and unprocessed premiums.
+            // This is a aspect of the business requirement as you cannot include payments that were received in advance of the critical date as 'policy value'
         };
     } catch (error) {
+        if(error.response && error.response.status ===417){
+            throw new Error(`Surrender quote response is null or does not have a result for ${policyNumber}.`);
+        } else {
         console.error(`Policy: ${policyNumber} - Error during surrender quote request:`, error);
         return null; // Return null to indicate an error
+        }
     }
 }
 
@@ -121,6 +131,11 @@ function formatDate(date) {
     return `${year}${month}${day}`;
 }
 
+
+
+// Given that this is a V1 service, this may need to be re-written to utilize a 
+// more up-to-date service like GetPolicy(v4) - @Drew-Schnabel
+// GetPolicy provides the processed too date as well as other potentially important details.
 async function getPolicyAnniversaryDate(policyNumber) {
     const policyIdentifier = policyNumber;
     const companyCode = "01";
@@ -257,7 +272,18 @@ async function evaluateCriticalDates(policyNumber) {
         for (const surrenderDate of dateRange) {
             const surrenderQuoteResult = await getSurrenderQuote(policyNumber, surrenderDate);
 
-            if (surrenderQuoteResult) {
+            if (!surrenderQuoteResult){
+                return {
+                    policyNumber: policyNumber,
+                            criticalDate: null,
+                            cashValue: null,
+                            loanIndebtedness: null,
+                            required_repayment: null,
+                            monthly_repayment: null,
+                            returnCode: 1,
+                            MessageInfo: "Critical Date failed to calculate. Please review LifePRO."
+                }
+            } else if (surrenderQuoteResult) {
                 const netSurr = surrenderQuoteResult.netSurr;
 
                 if (!quoteDateA) {

@@ -184,6 +184,7 @@
     display: grid;
     grid-template-columns:1fr 1fr;
     width: 1900px;
+    color:rgba(87, 87, 87, 0.582);
   }
   .grid-item{
     padding: 10px;
@@ -207,4 +208,7 @@
   font-size: large;
   color: #2e2d2d;
   
+  }
+  .policyinfo{
+    color:#2e2d2d
   }
