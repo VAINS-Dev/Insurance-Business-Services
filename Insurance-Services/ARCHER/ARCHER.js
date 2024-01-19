@@ -138,13 +138,12 @@ async function runARCHER() {
                             const premiumCompletedFolder = path.join(__dirname, 'WORKAREA/premium/premium.intake/completed');
 
                             //Once file processing is done, we will rename the files to append the date time it was processed.
-                            //then file processing is done, we will move the present files into the intake/Completed Folders.
+                            //then file rename processing is done, we will move the present files into the intake.completed folders.
                             await d.appendDateTimeToFiles(loanFolder);
                             await d.appendDateTImeToFiles(premiumFolder);
                             await d.moveFilesToCompletedFolder(loanFolder, loanCompletedFolder);
                             await d.moveFilesToCompletedFolder(premiumFolder, premiumCompletedFolder)
                         }
-
                     }
                 }
         catch (error) {
