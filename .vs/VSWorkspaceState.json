@@ -3,7 +3,14 @@
     "",
     "\\Insurance-Services",
     "\\Insurance-Services\\ARCHER",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.intake",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.intake\\completed",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.intake\\new",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.log",
+    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.log\\premium.success",
     "\\server"
   ],
+  "SelectedNode": "\\Insurance-Services\\ARCHER\\unitTests",
   "PreviewInSolutionExplorer": false
 }
