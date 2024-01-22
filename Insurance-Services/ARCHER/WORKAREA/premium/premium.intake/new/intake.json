@@ -1,0 +1,32 @@
+[
+  {
+    "susp_number": "V16669358   ",
+    "AMOUNT": 9.80,
+    "TAX_YEAR": "      2024",
+    "ACTIVITY_DATE": 20231227
+  },
+  {
+    "susp_number": "G80043509   ",
+    "AMOUNT": 33.90,
+    "TAX_YEAR": "      2024",
+    "ACTIVITY_DATE": 20240119
+  },
+  {
+    "susp_number": "V15145879   ",
+    "AMOUNT": 109.10,
+    "TAX_YEAR": "      2024",
+    "ACTIVITY_DATE": 20231113
+  },
+  {
+    "susp_number": "W17718947   ",
+    "AMOUNT": 133.50,
+    "TAX_YEAR": "      2024",
+    "ACTIVITY_DATE": 20230721
+  },
+  {
+    "susp_number": "W18292800   ",
+    "AMOUNT": 248.50,
+    "TAX_YEAR": "      2024",
+    "ACTIVITY_DATE": 20230524
+  }
+]

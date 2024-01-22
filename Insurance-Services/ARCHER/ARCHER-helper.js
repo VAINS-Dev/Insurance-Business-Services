@@ -1,18 +1,16 @@
-
-const loadConfig = require('../config/configLoader')
 const sql = require('mssql');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const fs = require('fs');
 const path = require('path');
 
-
+const { loadConfig } = require('../config/configLoader')
 const configurationLoader = require('../config/configLoader')
 const apiProductBaseUrl = configurationLoader.getConfig('ProductAPI').baseUrl;
 const apiPolicyBaseUrl = configurationLoader.getConfig('PolicyAPI').baseUrl;
 const apiPolicyKey = configurationLoader.getConfig('PolicyAPI').apiKey;
 const apiPartyBaseUrl = configurationLoader.getConfig('PartyAPI').baseUrl;
 const sqlLoggerEnabled = configurationLoader.loadConfig.sqlLoggerEnabled
-
+const config=loadConfig();
 const PolicyAPIToken = apiPolicyKey;
 
 
@@ -48,7 +46,6 @@ async function systemCheck() {
         isSystemOnline = isSystemOnline && apiStatus;
     }
     console.log('System Check Complete.')
-    console.clear();
     return isSystemOnline;
 };
 
@@ -118,7 +115,7 @@ async function ARCHERLogPayment(PolicyNumber, ServiceType, SuspenseAmount, Payme
     const newPaidToDate = NewPaidToDate
 
 
-    if (sqlLoggerEnabled === true) {
+    if (config.sqlLoggerEnabled === true) {
         if (ServiceType === 1) {
             const insertQuery = `
         INSERT INTO ARCHER_LoanPayments (PolicyNumber, PaymentCode, SuspenseAmount, PriorLoanBalance, NewLoanBalance, PaymentStatus, PaymentDate)
@@ -151,7 +148,7 @@ async function ARCHERLogPayment(PolicyNumber, ServiceType, SuspenseAmount, Payme
             });
         }
 
-    } else if (sqlLoggerEnabled === false) {
+    } else if (config.sqlLoggerEnabled === false) {
         //This will be used for File Driven logging.
     } else {
         console.error('Service Type not provided.')
@@ -348,6 +345,9 @@ async function ARCHERValidatePayment(POLICY_NUMBER, ServiceType) {
                     console.error('Error sending data to GETPOLICY API: ', error);
                     throw error;
                 }
+    } else {
+        console.error('Service Type not specified');
+        throw new Error('Service Type not specified');
     }
     //Inner-Support Function to Get the Active Loan List out of all Objects/Array.
     function getActiveLoan(AllLoanList){
@@ -485,7 +485,6 @@ async function runAllQueriesInFolder(queryFolderPath, ServiceType) {
     }
 }
 
-const config = require('../config/configLoader')
 async function readFolderResults(folderPath, ServiceType) {
     try {
         if (config.sqlReadEnabled === true) {

@@ -34,7 +34,6 @@ async function systemCheck() {
         isSystemOnline = isSystemOnline && apiStatus;
     }
     console.log('System Check Complete.')
-    console.clear();
     return isSystemOnline;
 };
 

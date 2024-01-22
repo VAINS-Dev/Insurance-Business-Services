@@ -9,7 +9,9 @@ function loadConfig() {
 
     const environment = config.envfeatureSwitch.preprodEnabled ? 'preprod' : 'prod';
     const sqlLoggingEnabled = config.loggingFeatureSwitch.sqlLoggingEnabled;
+    console.log('sqlLoggingEnabled=',sqlLoggingEnabled)
     const sqlReadEnabled = config.dataReadFeatureSwitch.sqlDataReadEnabled;
+    console.log('sqlReadEnabled=', sqlReadEnabled)
     const environmentConfig = config.environment[environment];
 
     const ProductAPI = {

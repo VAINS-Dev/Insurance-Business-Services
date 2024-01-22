@@ -6,8 +6,9 @@ const config = require('../config/configLoader');
 const fs = require('fs');
 const s = require('../config/systemCheck');
 const system = require('../ARCHER/ARCHER-helper')
+const { loadConfig } = require('../config/configLoader')
 
-
+const config2 = loadConfig();
 
 async function runARCHER() {
     const options = { timeZone: 'America/New_York' };
@@ -16,21 +17,21 @@ async function runARCHER() {
         const startHour = 5;  // 5:00 AM - Start Time
         const endHour = 24;   // 5:00 PM - Last End Time to stay out of cycle
 
-            //const systemCheck = require('../ARCHER/systemCheck')
-
 
     if (currentHour >= startHour && currentHour < endHour) {
-        console.log("Initiating A.R.C.H.E.R (Automated Remittance Control Handling and Electronic Reconciliation)" + now.toLocaleString());
-                try{
+        console.log("Initiating A.R.C.H.E.R (Automated Remittance Control Handling and Electronic Reconciliation) " + now.toLocaleString());
+        console.log('SQL READ', config2.sqlReadEnabled)
+        console.log('SQL LOG' , config2.sqlLoggingEnabled)        
+        try{
                     //await confirmation;
                     const systemStatus = await system.systemCheck();
                     console.log('Overall System Status:', systemStatus);
                     if (!systemStatus) {
                         console.log('LIPAS REST API is offline. Process Stopped');
-                        process.exit(1);
+                        process.exit();
 
                     } else {
-                        if (config.sqlReadEnabled === true) {
+                        if (config2.sqlReadEnabled === true) {
 
                             const loanFolder = path.join(__dirname, 'SqlQueries/loan');
                             const premiumFolder = path.join(__dirname, 'SqlQueries/premium-test');
@@ -40,8 +41,8 @@ async function runARCHER() {
 
 
 
-                        } else if (config.sqlReadEnabled === false) {
-                            if (config.sqlLoggingEnabled === false) { //If Config settings are mis-matched, do not allow the process to continue
+                        } else if (config2.sqlReadEnabled === false) {
+                            if (config2.sqlLoggingEnabled === false && config2.sqlReadEnabled === false) { //If Config settings are mis-matched, do not allow the process to continue
                                 console.log('Test Mode Enabled: Logging files locally.')
 
                                 //      Establish Global Variables      //
@@ -60,7 +61,7 @@ async function runARCHER() {
                                 const loanFailureLog = `LoanPayments - Failures - ${currentDate}.txt`;
 
                                 //      End Declaration of Global Var    //
-
+/*
                                 const loanResult = d.readFolderResults(loanFolder, 1);                   //Read Loan Folder
                                 const jsonLoanResult = JSON.parse(loanResult);                              //Parse Aggregate Loan Folder Results
                                 if (Array.isArray(jsonLoanResult) && jsonLoanResult.length > 0) {           //Determine if proper format/array
@@ -91,7 +92,7 @@ async function runARCHER() {
                                 } else {
                                     console.error('Loan File is not in Array Format!');
                                 }
-
+*/
                                 const premiumResult = d.readFolderResults(premiumFolder, 2);             //Read Premium Folder
                                 const jsonPremiumResult = JSON.parse(premiumResult);                        //Parse Aggregate Premium Folder Results
                                 if (Array.isArray(jsonPremiumResult) && jsonPremiumResult.length > 0) {     //Determine if proper format/array
