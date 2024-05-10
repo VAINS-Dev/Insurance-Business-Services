@@ -2,11 +2,13 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 
 const { request } = require('express');
 const loadConfig = require('../config/configLoader')
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') })
 
-const apiPolicyBaseUrl = loadConfig.getConfig('PolicyAPI').baseUrl
+const apiPolicyBaseUrl = process.env.EXL_LIFEPRO_POLICY_ENDPOINT;
 const BenefitDetailsAPI = apiPolicyBaseUrl + `/v1/Policy/GetBenefitDetails`
 
-const policyAPIKey = loadConfig.getConfig('PolicyAPI').apiKey
+const policyAPIKey = process.env.EXL_LIFEPRO_POLICY_KEY;
 
 function generateGuid() {
     function s4() {

@@ -8,7 +8,7 @@ const apiPolicyBaseUrl = loadConfig.getConfig('PolicyAPI').baseUrl;
 const apiPolicyKey = loadConfig.getConfig('PolicyAPI').apiKey;
 const apiToken = apiPolicyKey;
 
-const surrenderQuoteEndpoint = `/v3/Quote/${randomGuid}/SurrenderQuote`;
+const surrenderQuoteEndpoint = `/v3/Quote/SurrenderQuote/${randomGuid}`;
 const surrQuoteApiUrl = `${apiPolicyBaseUrl}${surrenderQuoteEndpoint}`;
 
 function reformatDate(yyyyMMddDate) {
@@ -189,7 +189,7 @@ async function getPolicyAnniversaryDate(policyNumber) {
 async function getPolicyIssueDay(policyNumber) {
     const policyIdentifier = policyNumber;
     const companyCode = "01";
-    const policySearchApi = apiPolicyBaseUrl + `/v3/Policy/${randomGuid}/PolicySearch`;
+    const policySearchApi = apiPolicyBaseUrl + `/v3/Policy/PolicySearch/${randomGuid}`;
 
     const requestBody = {
         "policySearchReq": {

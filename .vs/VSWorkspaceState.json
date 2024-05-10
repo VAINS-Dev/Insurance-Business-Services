@@ -2,15 +2,17 @@
   "ExpandedNodes": [
     "",
     "\\Insurance-Services",
-    "\\Insurance-Services\\ARCHER",
     "\\Insurance-Services\\ARCHER\\WORKAREA\\premium",
-    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.intake",
-    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.intake\\completed",
-    "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.intake\\new",
     "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.log",
     "\\Insurance-Services\\ARCHER\\WORKAREA\\premium\\premium.log\\premium.success",
-    "\\server"
+    "\\Insurance-Services\\config",
+    "\\Insurance-Services\\config\\configuration",
+    "\\Insurance-Services\\helper-services",
+    "\\Insurance-Services\\helper-services\\lipas-helper-api",
+    "\\Insurance-Services\\main",
+    "\\server",
+    "\\server\\public\\critical-date-app"
   ],
-  "SelectedNode": "\\Insurance-Services\\ARCHER\\unitTests",
+  "SelectedNode": "\\server\\Insurance-Business-Services.js",
   "PreviewInSolutionExplorer": false
 }
