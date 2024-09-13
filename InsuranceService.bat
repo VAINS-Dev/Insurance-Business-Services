@@ -23,12 +23,15 @@ rem Append to log file and include the date and time of execution
     echo ======================
 ) >> "%log_file%"
 
-rem Display fancy overview message
-echo ▪   ▐ ▄ .▄▄ · ▄• ▄▌▄▄▄   ▄▄▄·  ▐ ▄  ▄▄· ▄▄▄ .    ▄▄▄▄· ▄• ▄▌.▄▄ · ▪   ▐ ▄ ▄▄▄ ..▄▄ · .▄▄ ·
-echo ██ •█▌▐█▐█ ▀. █▪██▌▀▄ █·▐█ ▀█ •█▌▐█▐█ ▌▪▀▄.▀·    ▐█ ▀█▪█▪██▌▐█ ▀. ██ •█▌▐█▀▄.▀·▐█ ▀. ▐█ ▀.
-echo ▐█·▐█▐▐▌▄▀▀▀█▄█▌▐█▌▐▀▀▄ ▄█▀▀█ ▐█▐▐▌██ ▄▄▐▀▀▪▄    ▐█▀▀█▄█▌▐█▌▄▀▀▀█▄▐█·▐█▐▐▌▐▀▀▪▄▄▀▀▀█▄▄▀▀▀█▄
-echo ▐█▌██▐█▌▐█▄▪▐█▐█▄█▌▐█•█▌▐█ ▪▐▌██▐█▌▐███▌▐█▄▄▌    ██▄▪▐█▐█▄█▌▐█▄▪▐█▐█▌██▐█▌▐█▄▄▌▐█▄▪▐█▐█▄▪▐█
-echo ▀▀▀▀▀ █▪ ▀▀▀▀  ▀▀▀ .▀  ▀ ▀  ▀ ▀▀ █▪·▀▀▀  ▀▀▀     ·▀▀▀▀  ▀▀▀  ▀▀▀▀ ▀▀▀▀▀ █▪ ▀▀▀  ▀▀▀▀  ▀▀▀▀
+rem Display the fancy ASCII message (modified to ensure proper rendering in batch)
+echo.
+echo +-------------------------------------+
+echo |      ▪   ▐ ▄ .▄▄ · ▄• ▄▌▄▄▄        |
+echo |      ██ •█▌▐█▐█ ▀. █▪██▌▀▄ █·     |
+echo |      ▐█·▐█▐▐▌▄▀▀▀█▄█▌▐█▌▐▀▀▄      |
+echo |      ▐█▌██▐█▌▐█▄▪▐█▐█▄█▌▐█•█▌     |
+echo |      ▀▀▀▀▀ █▪ ▀▀▀▀  ▀▀▀ .▀  ▀     |
+echo +-------------------------------------+
 echo.
 
 echo This script will perform the following actions:
@@ -47,34 +50,6 @@ if /i not "%confirmation%"=="yes" (
     echo Exiting script without making any changes.
     echo Script exited by user on %date% %time% >> "%log_file%"
     exit /b 0
-)
-
-rem Function to validate user input for yes/no questions
-:GET_VALID_INPUT
-set /p answer="%~1 (yes/no): "
-set "answer=%answer:~0,3%"
-if /i "%answer%"=="yes" (
-    set "result=yes"
-) else if /i "%answer%"=="no" (
-    set "result=no"
-) else (
-    echo Please answer yes or no.
-    goto GET_VALID_INPUT
-)
-
-rem Function to get the branch from the user
-:GET_BRANCH_INPUT
-set /p branch="%~1 (default: development): "
-if "%branch%"=="" (
-    set "branch=development"
-)
-
-rem Function to backup a repository before making changes
-:BACKUP_REPOSITORY
-if exist "%~1" (
-    echo Backing up repository %~1...
-    set "backup_name=%backup_folder%\%~2_backup_%date:~10,4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%%time:~6,2%.zip"
-    powershell Compress-Archive -Path "%~1" -DestinationPath "%backup_name%"
 )
 
 rem Define Git Locations
@@ -106,41 +81,41 @@ if not exist "%json_file%" (
 )
 
 rem Present the repository selection menu
+echo.
 echo Which repositories do you want to clone or update?
+echo.
 
-call :GET_VALID_INPUT "Update ARCHER repository?"
-set "update_archer=%result%"
-call :GET_VALID_INPUT "Update LIPAS-Client repository?"
-set "update_lipas_client=%result%"
-call :GET_VALID_INPUT "Update VBA LIPAS Core repository?"
-set "update_lipas_core=%result%"
-call :GET_VALID_INPUT "Update VBA-Insurance API repository?"
-set "update_lipas_api=%result%"
+rem Get update decision for each repository
+set /p update_archer="Update ARCHER repository? (yes/no): "
+set /p update_lipas_client="Update LIPAS-Client repository? (yes/no): "
+set /p update_lipas_core="Update VBA LIPAS Core repository? (yes/no): "
+set /p update_lipas_api="Update VBA-Insurance API repository? (yes/no): "
 
-if "%update_archer%"=="yes" (
-    call :GET_BRANCH_INPUT "Enter branch for ARCHER"
-    set "branch_archer=%branch%"
+rem Branch input logic, if user chose yes
+if /i "%update_archer%"=="yes" (
+    set /p branch_archer="Enter branch for ARCHER (default: development): "
+    if "%branch_archer%"=="" set "branch_archer=development"
 ) else (
     set "branch_archer=skipped"
 )
 
-if "%update_lipas_client%"=="yes" (
-    call :GET_BRANCH_INPUT "Enter branch for LIPAS-Client"
-    set "branch_lipas_client=%branch%"
+if /i "%update_lipas_client%"=="yes" (
+    set /p branch_lipas_client="Enter branch for LIPAS-Client (default: development): "
+    if "%branch_lipas_client%"=="" set "branch_lipas_client=development"
 ) else (
     set "branch_lipas_client=skipped"
 )
 
-if "%update_lipas_core%"=="yes" (
-    call :GET_BRANCH_INPUT "Enter branch for VBA LIPAS Core"
-    set "branch_lipas_core=%branch%"
+if /i "%update_lipas_core%"=="yes" (
+    set /p branch_lipas_core="Enter branch for VBA LIPAS Core (default: development): "
+    if "%branch_lipas_core%"=="" set "branch_lipas_core=development"
 ) else (
     set "branch_lipas_core=skipped"
 )
 
-if "%update_lipas_api%"=="yes" (
-    call :GET_BRANCH_INPUT "Enter branch for VBA-Insurance API"
-    set "branch_lipas_api=%branch%"
+if /i "%update_lipas_api%"=="yes" (
+    set /p branch_lipas_api="Enter branch for VBA-Insurance API (default: development): "
+    if "%branch_lipas_api%"=="" set "branch_lipas_api=development"
 ) else (
     set "branch_lipas_api=skipped"
 )
@@ -153,8 +128,6 @@ echo User selected VBA-Insurance API update: %update_lipas_api%, Branch: %branch
 
 rem Function to clone or pull a repository
 :CLONE_OR_PULL
-call :BACKUP_REPOSITORY "%~2" "%~4"
-
 if not exist "%~2\.git" (
     echo Cloning repository into %~2%...
     git clone --progress --branch %~3% %~1% %~2%
@@ -168,29 +141,29 @@ if not exist "%~2\.git" (
 rem Summary of updates
 set "summary="
 
-if "%update_archer%"=="yes" (
-    call :CLONE_OR_PULL %Archer% "A.R.C.H.E.R" "%branch_archer%" "ARCHER"
+if /i "%update_archer%"=="yes" (
+    call :CLONE_OR_PULL %Archer% "A.R.C.H.E.R" "%branch_archer%"
     set "summary=%summary%ARCHER: Updated\n"
 ) else (
     set "summary=%summary%ARCHER: Skipped\n"
 )
 
-if "%update_lipas_client%"=="yes" (
-    call :CLONE_OR_PULL %Lipas_client% "LIPAS-Client" "%branch_lipas_client%" "LIPAS-Client"
+if /i "%update_lipas_client%"=="yes" (
+    call :CLONE_OR_PULL %Lipas_client% "LIPAS-Client" "%branch_lipas_client%"
     set "summary=%summary%LIPAS-Client: Updated\n"
 ) else (
     set "summary=%summary%LIPAS-Client: Skipped\n"
 )
 
-if "%update_lipas_core%"=="yes" (
-    call :CLONE_OR_PULL %Lipas_core% "VBA-Insurance-Core" "%branch_lipas_core%" "VBA-Insurance-Core"
+if /i "%update_lipas_core%"=="yes" (
+    call :CLONE_OR_PULL %Lipas_core% "VBA-Insurance-Core" "%branch_lipas_core%"
     set "summary=%summary%VBA LIPAS Core: Updated\n"
 ) else (
     set "summary=%summary%VBA LIPAS Core: Skipped\n"
 )
 
-if "%update_lipas_api%"=="yes" (
-    call :CLONE_OR_PULL %Lipas_api% "VBA-Insurance-API" "%branch_lipas_api%" "VBA-Insurance-API"
+if /i "%update_lipas_api%"=="yes" (
+    call :CLONE_OR_PULL %Lipas_api% "VBA-Insurance-API" "%branch_lipas_api%"
     set "summary=%summary%VBA-Insurance API: Updated\n"
 ) else (
     set "summary=%summary%VBA-Insurance API: Skipped\n"
@@ -200,3 +173,6 @@ rem Display summary
 echo Summary of actions:
 echo %summary%
 echo %summary% >> "%log_file%"
+
+endlocal
+exit /b 0
