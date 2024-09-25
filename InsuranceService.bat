@@ -75,7 +75,7 @@ if exist "%~1" (
 )
 
 rem Define Git Locations
-set "pat=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"
+set "pat="
 set "Archer=https://%pat%@github.com/VAINS-Dev/A.R.C.H.E.R.git"
 set "Lipas_client=https://%pat%@github.com/VAINS-Dev/LIPAS-Client.git"
 set "Lipas_core=https://%pat%@github.com/VAINS-Dev/VBA-Insurance-Core.git"
