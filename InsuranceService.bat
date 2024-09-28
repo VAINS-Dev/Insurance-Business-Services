@@ -1,6 +1,16 @@
 @echo off
 setlocal
 
+rem Prompt for GitHub Personal Authentication Token
+set /p "pat=Please enter GitHub Personal Authentication Token: "
+echo.
+
+rem Ensure PAT is stored in memory only and not written to log file or output
+if "%pat%"=="" (
+    echo Error: PAT is required to proceed.
+    exit /b 1
+)
+
 rem Define Folder Structure
 set "main_folder=Insurance Business Services"
 set "sub_folder=Configuration"
@@ -52,12 +62,16 @@ set /p answer="%~1 (yes/no): "
 set "answer=%answer:~0,3%"
 if /i "%answer%"=="yes" (
     set "result=yes"
+    goto :END_VALID_INPUT
 ) else if /i "%answer%"=="no" (
     set "result=no"
+    goto :END_VALID_INPUT
 ) else (
     echo Please answer yes or no.
     goto GET_VALID_INPUT
 )
+:END_VALID_INPUT
+exit /b 0
 
 rem Function to get the branch from the user
 :GET_BRANCH_INPUT
@@ -65,6 +79,7 @@ set /p branch="%~1 (default: development): "
 if "%branch%"=="" (
     set "branch=development"
 )
+exit /b 0
 
 rem Function to backup a repository before making changes
 :BACKUP_REPOSITORY
@@ -73,9 +88,9 @@ if exist "%~1" (
     set "backup_name=%backup_folder%\%~2_backup_%date:~10,4%%date:~4,2%%date:~7,2%_%time:~0,2%%time:~3,2%%time:~6,2%.zip"
     powershell Compress-Archive -Path "%~1" -DestinationPath "%backup_name%"
 )
+exit /b 0
 
-rem Define Git Locations
-set "pat="
+rem Define Git Locations with the inputted PAT
 set "Archer=https://%pat%@github.com/VAINS-Dev/A.R.C.H.E.R.git"
 set "Lipas_client=https://%pat%@github.com/VAINS-Dev/LIPAS-Client.git"
 set "Lipas_core=https://%pat%@github.com/VAINS-Dev/VBA-Insurance-Core.git"
@@ -161,6 +176,7 @@ if not exist "%~2\.git" (
     git pull --progress origin %~3%
     cd ..
 )
+exit /b 0
 
 rem Summary of updates
 set "summary="
@@ -197,3 +213,6 @@ rem Display summary
 echo Summary of actions:
 echo %summary%
 echo %summary% >> "%log_file%"
+
+rem Clean up - unset the PAT to ensure it's not kept in memory after the script ends
+set "pat="
