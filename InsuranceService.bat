@@ -5,11 +5,23 @@ rem Prompt for GitHub Personal Authentication Token
 set /p "pat=Please enter GitHub Personal Authentication Token: "
 echo.
 
-rem Ensure PAT is stored in memory only and not written to log file or output
-if "%pat%"=="" (
-    echo Error: PAT is required to proceed.
+rem Validate the PAT using GitHub API
+echo Validating the GitHub Personal Access Token...
+
+curl -s -o nul -w "%%{http_code}" -H "Authorization: token %pat%" https://api.github.com/user > status.txt
+
+set /p status=<status.txt
+
+if "%status%"=="200" (
+    echo Token is valid.
+) else (
+    echo Error: Invalid GitHub Personal Access Token. Please try again.
+    del status.txt
     exit /b 1
 )
+
+rem Cleanup status file
+del status.txt
 
 rem Define Folder Structure
 set "main_folder=Insurance Business Services"
