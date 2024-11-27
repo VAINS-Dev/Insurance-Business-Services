@@ -16,10 +16,6 @@ echo Author: VAINS-Dev
 echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
 echo Version Changes:
-powershell -Command "Write-Host '1.0.0 - Initial version of the loader.' -ForegroundColor Green"
-powershell -Command "Write-Host '1.0.1 - Added support for updating dependencies.' -ForegroundColor Green"
-powershell -Command "Write-Host '1.0.2 - Added version check and update functionality.' -ForegroundColor Green"
-powershell -Command "Write-Host '1.0.3 - Added support for updating the loader script.' -ForegroundColor Green"
 powershell -Command "Write-Host '1.0.4 - Added support for updating the database configuration file.' -ForegroundColor Green"
 powershell -Command "Write-Host '1.0.5 - Added support for updating the documentation repository.' -ForegroundColor Green"
 
