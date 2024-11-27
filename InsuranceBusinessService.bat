@@ -1,6 +1,5 @@
 @echo off
 setlocal EnableDelayedExpansion
-
 set "app_version=1.0.3"
 
 :: Define log file
@@ -17,10 +16,10 @@ echo Author: VAINS-Dev
 echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
 echo Version Changes:
-powershell -Command "Write-Host '1.0.0' -ForegroundColor Green"; echo - Initial version of the loader.
-powershell -Command "Write-Host '1.0.1' -ForegroundColor Green"; echo - Added support for updating dependencies.
-powershell -Command "Write-Host '1.0.2' -ForegroundColor Green"; echo - Added version check and update functionality.
-powershell -Command "Write-Host '1.0.3' -ForegroundColor Green"; echo - Added support for updating the loader script.
+powershell -Command "Write-Host '1.0.0 - Initial version of the loader.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.1 - Added support for updating dependencies.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.2 - Added version check and update functionality.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.3 - Added support for updating the loader script.' -ForegroundColor Green"
 
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
