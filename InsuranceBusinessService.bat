@@ -58,15 +58,7 @@ if exist "Configuration\databaseConfig.json" (
         echo.
         set /p "edit_config=Would you like to edit the configuration? (y/n): "
         if /I "%edit_config%"=="y" (
-            powershell -Command ^
-            "$config = Get-Content 'Configuration\databaseConfig.json' | ConvertFrom-Json;" ^
-            "foreach ($key in $config.DatabaseConfiguration.PSObject.Properties.Name) {" ^
-            "  $currentValue = $config.DatabaseConfiguration.$key;" ^
-            "  Write-Host 'Current value for' $key ':' $currentValue;" ^
-            "  $newValue = Read-Host 'Enter new value for' $key ' (leave blank to keep current value):';" ^
-            "  if ($newValue -ne '') { $config.DatabaseConfiguration.$key = $newValue }" ^
-            "}" ^
-            "$config | ConvertTo-Json -Depth 10 | Set-Content 'Configuration\databaseConfig.json';"
+            call :edit_config
         ) else (
             echo Proceeding to verify PAT...
         )
@@ -92,15 +84,51 @@ if exist "Configuration\databaseConfig.json" (
         echo }
     ) > "Configuration\databaseConfig.json"
     echo [%date% %time%] Created 'databaseConfig.json' file. >> "%log_file%"
-
-    powershell -Command ^
-    "$config = Get-Content 'Configuration\databaseConfig.json' | ConvertFrom-Json;" ^
-    "foreach ($key in $config.DatabaseConfiguration.PSObject.Properties.Name) {" ^
-    "  $value = Read-Host 'Enter value for' $key ':';" ^
-    "  if ($value -ne '') { $config.DatabaseConfiguration.$key = $value }" ^
-    "}" ^
-    "$config | ConvertTo-Json -Depth 10 | Set-Content 'Configuration\databaseConfig.json';"
+    call :edit_config
 )
+
+:: Rest of your script...
+
+goto :eof
+
+:edit_config
+(
+    echo $config = Get-Content 'Configuration\databaseConfig.json' ^| ConvertFrom-Json;
+    echo foreach ($key in $config.DatabaseConfiguration.PSObject.Properties.Name) {
+    echo   $currentValue = $config.DatabaseConfiguration.$key;
+    echo   Write-Host "Current value for $key : $currentValue";
+    echo   $newValue = Read-Host "Enter new value for $key (leave blank to keep current value):";
+    echo   if ($newValue -ne '') {
+    echo     $valueType = $currentValue.GetType().Name;
+    echo     switch ($valueType) {
+    echo       'Boolean' {
+    echo         if ($newValue -match '^(true|false)$') {
+    echo           $config.DatabaseConfiguration.$key = [bool]$newValue;
+    echo         } else {
+    echo           Write-Host "Invalid Boolean value entered. Keeping current value.";
+    echo         }
+    echo       }
+    echo       'Int32' {
+    echo         if ([int]::TryParse($newValue, [ref]$parsedValue)) {
+    echo           $config.DatabaseConfiguration.$key = $parsedValue;
+    echo         } else {
+    echo           Write-Host "Invalid integer value entered. Keeping current value.";
+    echo         }
+    echo       }
+    echo       default {
+    echo         $config.DatabaseConfiguration.$key = $newValue;
+    echo       }
+    echo     }
+    echo   }
+    echo }
+    echo $config ^| ConvertTo-Json -Depth 10 ^| Set-Content 'Configuration\databaseConfig.json';
+) > temp_edit_config.ps1
+
+powershell -ExecutionPolicy Bypass -File temp_edit_config.ps1
+
+del temp_edit_config.ps1
+
+goto :eof
 
 :: Verify Git, PowerShell, and Node.js are installed
 git --version >nul 2>&1
