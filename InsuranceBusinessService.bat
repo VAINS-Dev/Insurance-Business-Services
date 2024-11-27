@@ -18,70 +18,6 @@ echo.
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
 set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
-
-:: Download the latest version.json
-set "version_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/version.json"
-set "temp_version=%TEMP%\version_new.json"
-powershell -Command "(New-Object Net.WebClient).DownloadFile('%version_url%', '%temp_version%')"
-
-:: Compare the current version.json to the downloaded version.json
-fc "version.json" "%temp_version%" >nul
-if %ERRORLEVEL% NEQ 0 (
-    echo A newer version of version.json is available. Updating...
-    timeout /t 5 /nobreak >nul
-    copy /y "%temp_version%" "version.json"
-    del "%temp_version%"
-) else (
-    del "%temp_version%"
-)
-:: Read version.json and display changes
-fo    set "line=%%i"
-
-    if "!line!"=="{" (
-
-         set "json="
-
-      )
-
-       set "json=!json!!line!"
-
-               set "json=!json:~1,-1!"
- set "j    )
-"
-    i)
-(
-    
-
-    se
-
-for /F 
-
-    set
-
-    set
-
-)
-    echo !key!: !value!
- "value=!value:~1,-1!"
-    set "key=!key:~1!"
- "value=%%j"
-    set "key=%%i"
-"tokens=1,2 delims=:," %%i in ("!json!") do (
-:: Extract and display key/value pairs
-t "json=!json:~1,-1!"
-    )
-)
-
-:: Extract changes portion
-for /F "tokens=1,* delims=:" %%i in ("!json:Changes={!") do (
-    set "changes=%%j"
-)
-
-:: Display changes
-echo Changes:
-for /F "tokens=1,2 delims=," %%i in ("!changes!") do (
-    echo Version %%i: %%j
-)
 :: Download the latest script
 powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%')"
 
@@ -97,6 +33,56 @@ if %ERRORLEVEL% NEQ 0 (
 ) else (
     del "%temp_script%"
 )
+:: Download the latest version.json
+set "version_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/version.json"
+set "temp_version=%TEMP%\version_new.json"
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%version_url%', '%temp_version%')"
+
+:: Download the latest script
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%version_url%', '%temp_version%')"
+
+:: Compare the current script to the downloaded script
+fc "%~f0" "%temp_version%" >nul
+if %ERRORLEVEL% NEQ 0 (
+    echo A newer version of this loader is available. Updating...
+    timeout /t 5 /nobreak >nul
+    copy /y "%temp_version%" "%~f0"
+    del "%temp_version%"
+    start "" "%~f0" %*
+    exit /b
+) else (
+    del "%temp_version%"
+)
+:: Compare the current version.json to the downloaded version.json
+if exist "version.json" (
+    fc "version.json" "%temp_version%" >nul
+    if %ERRORLEVEL% NEQ 0 (
+        echo A newer version of version.json is available. Updating...
+        timeout /t 5 /nobreak >nul
+        copy /y "%temp_version%" "version.json"
+        del "%temp_version%"
+    ) else (
+        del "%temp_version%"
+    )
+) else (
+    copy /y "%temp_version%" "version.json"
+    del "%temp_version%"
+)
+:: Display Changes from version.json
+echo Changes:
+powershell -Command "$json = Get-Content 'version.json' -Raw | ConvertFrom-Json; foreach ($entry in $json.Changes.GetEnumerator()) { Write-Host 'Version' $entry.Key ': ' $entry.Value }"
+
+:: Extract changes portion
+for /F "tokens=1,* delims=:" %%i in ("!json:Changes={!") do (
+    set "changes=%%j"
+)
+
+:: Display changes
+echo Changes:
+for /F "tokens=1,2 delims=," %%i in ("!changes!") do (
+    echo Version %%i: %%j
+)
+
 :: Create 'Configuration' folder and 'databaseConfig.json' if they don't exist
 if not exist "Configuration" (
     mkdir "Configuration"
