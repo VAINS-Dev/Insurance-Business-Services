@@ -1,9 +1,0 @@
-{
-    "name": "Insurance Business Services",
-    "version": "1.0.0",
-    "Changes":{ 
-        "1.0.0": "Initial version",
-        "1.0.1": "Added auto-update feature"
-    }
-
-}

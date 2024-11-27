@@ -1,6 +1,8 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+set "app_version"=1.0.2
+
 :: Define log file
 set "log_file=script_log.txt"
 
@@ -8,12 +10,16 @@ set "log_file=script_log.txt"
 echo [%date% %time%] Script started >> "%log_file%"
 
 :: Welcome message
-echo Welcome to Insurance Business Services!
+echo [32mWelcome to Insurance Business Services![0m
 echo.
-echo Version: 1.0.1
+echo Version: [32m"%app_version&"[0m
 echo Author: VAINS-Dev
 echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
+echo Version Changes:
+echo [32m1.0.0[0m - Initial version of the loader.
+echo [32m1.0.1[0m - Added support for updating dependencies.
+echo [32m1.0.2[0m - Added version check and update functionality.]
 
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
@@ -107,6 +113,7 @@ echo echo %PAT% >> "%ASKPASS_SCRIPT%"
 
 set GIT_ASKPASS=%ASKPASS_SCRIPT%
 set GIT_TERMINAL_PROMPT=0
+set GIT_CREDENTIAL_HELPER=
 
 git ls-remote %repo_url% >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
