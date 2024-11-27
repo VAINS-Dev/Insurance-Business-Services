@@ -12,7 +12,7 @@ echo [%date% %time%] Script started >> "%log_file%"
 :: Welcome message
 echo [32mWelcome to Insurance Business Services![0m
 echo.
-echo Version: [32m"%app_version&"[0m
+echo Version: [32m"%app_version%"[0m
 echo Author: VAINS-Dev
 echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
