@@ -35,14 +35,40 @@ if %ERRORLEVEL% NEQ 0 (
     del "%temp_version%"
 )
 :: Read version.json and display changes
-for /F "tokens=*" %%i in ('type version.json') do (
-    set "line=%%i"
+fo    set "line=%%i"
+
     if "!line!"=="{" (
-        set "json="
-    )
-    set "json=!json!!line!"
-    if "!line!"=="}" (
-        set "json=!json:~1,-1!"
+
+         set "json="
+
+      )
+
+       set "json=!json!!line!"
+
+               set "json=!json:~1,-1!"
+ set "j    )
+"
+    i)
+(
+    
+
+    se
+
+for /F 
+
+    set
+
+    set
+
+)
+    echo !key!: !value!
+ "value=!value:~1,-1!"
+    set "key=!key:~1!"
+ "value=%%j"
+    set "key=%%i"
+"tokens=1,2 delims=:," %%i in ("!json!") do (
+:: Extract and display key/value pairs
+t "json=!json:~1,-1!"
     )
 )
 
