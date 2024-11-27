@@ -41,6 +41,7 @@ if %ERRORLEVEL% NEQ 0 (
     del "%temp_script%"
 )
 
+
 :: Create 'Configuration' folder and 'databaseConfig.json' if they don't exist
 if not exist "Configuration" (
     mkdir "Configuration"
