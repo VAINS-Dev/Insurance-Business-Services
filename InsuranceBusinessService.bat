@@ -126,7 +126,7 @@ if not exist "Repo-Backup" (
 set "repos[1]=ARCHER|A.R.C.H.E.R|https://github.com/VAINS-Dev/A.R.C.H.E.R.git"
 set "repos[2]=LIPAS-Client|LIPAS-Client|https://github.com/VAINS-Dev/LIPAS-Client.git"
 set "repos[3]=VBA-Insurance-Core|VBA-Insurance-Core|https://github.com/VAINS-Dev/VBA-Insurance-Core.git"
-set "repos[4]=Insurance-Business-Services-Database|https://github.com/VAINS-Dev/Insurance-Business-Services-Database.git"
+set "repos[4]=Insurance-Business-Services-Database|Insurance-Business-Services-Database|https://github.com/VAINS-Dev/Insurance-Business-Services-Database.git"
 ::set "repos[4]=VBA-Insurance-API|VBA-Insurance-API|https://github.com/VAINS-Dev/VBA-Insurance-API.git"
 
 :: Count the number of repositories
