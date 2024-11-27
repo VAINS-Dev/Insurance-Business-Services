@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-set "app_version=1.0.4"
+set "app_version=1.0.5"
 
 :: Define log file
 set "log_file=script_log.txt"
@@ -21,6 +21,7 @@ powershell -Command "Write-Host '1.0.1 - Added support for updating dependencies
 powershell -Command "Write-Host '1.0.2 - Added version check and update functionality.' -ForegroundColor Green"
 powershell -Command "Write-Host '1.0.3 - Added support for updating the loader script.' -ForegroundColor Green"
 powershell -Command "Write-Host '1.0.4 - Added support for updating the database configuration file.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.5 - Added support for updating the documentation repository.' -ForegroundColor Green"
 
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
@@ -62,6 +63,31 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b
 ) else (
     del "%temp_script%"
+)
+
+:: Clone or update the documentation repository
+set "doc_repo_url=https://github.com/VAINS-Dev/Insurance-Business-Services-Documentation.git"
+set "doc_repo_folder=Insurance-Business-Services-Documentation"
+
+if not exist "%doc_repo_folder%" (
+    echo Cloning documentation repository...
+    git clone "%doc_repo_url%" "%doc_repo_folder%"
+    if %ERRORLEVEL% NEQ 0 (
+        echo Error cloning documentation repository. Exiting...
+        echo [%date% %time%] Error cloning documentation repository. >> "%log_file%"
+        exit /b
+    )
+) else (
+    echo Updating documentation repository...
+    pushd "%doc_repo_folder%"
+    git pull origin main
+    if %ERRORLEVEL% NEQ 0 (
+        echo Error updating documentation repository. Exiting...
+        echo [%date% %time%] Error updating documentation repository. >> "..\%log_file%"
+        popd
+        exit /b
+    )
+    popd
 )
 
 :: Create 'Configuration' folder if it doesn't exist
