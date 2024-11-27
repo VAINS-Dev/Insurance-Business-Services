@@ -22,7 +22,6 @@ powershell -Command "Write-Host '1.0.2 - Added version check and update function
 powershell -Command "Write-Host '1.0.3 - Added support for updating the loader script.' -ForegroundColor Green"
 powershell -Command "Write-Host '1.0.4 - Added support for updating the database configuration file.' -ForegroundColor Green"
 
-
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
 set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
@@ -41,7 +40,6 @@ if %ERRORLEVEL% NEQ 0 (
 ) else (
     del "%temp_script%"
 )
-
 
 :: Create 'Configuration' folder if it doesn't exist
 if not exist "Configuration" (
@@ -137,25 +135,199 @@ if "%PAT%"=="" (
 :: Log PAT entry (do not log the actual PAT)
 echo [%date% %time%] PAT entered by user. >> "%log_file%"
 
-:: Verify PAT by attempting to access a repository
+:: Verify PAT by attempting to access the GitHub API
 echo Verifying PAT...
-set "repo_url=https://github.com/VAINS-Dev/A.R.C.H.E.R.git"
-set "ASKPASS_SCRIPT=%TEMP%\git_askpass.bat"
-echo @echo off > "%ASKPASS_SCRIPT%"
-echo echo %PAT% >> "%ASKPASS_SCRIPT%"
-
-set GIT_ASKPASS=%ASKPASS_SCRIPT%
-set GIT_TERMINAL_PROMPT=0
-set GIT_CREDENTIAL_HELPER=
-
-git ls-remote %repo_url% >nul 2>&1
+curl -s -H "Authorization: token %PAT%" https://api.github.com/user >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo Invalid PAT or network error. Please try again.
     echo [%date% %time%] Invalid PAT entered. >> "%log_file%"
-    del "%ASKPASS_SCRIPT%"
     set PAT=
-    set GIT_ASKPASS=
-    set GIT_TERMINAL_PROMPT=
+    goto prompt_pat
+)
+echo PAT verified successfully.
+echo [%date% %time%] PAT verified successfully. >> "%log_file%"
+
+:: Create Repo-Backup directory if it doesn't exist
+if not exist "Repo-Backup" (
+    mkdir "Repo-Backup"
+    echo [%date% %time%] Created Repo-Backup directory. >> "%log_file%"
+)
+
+:: Define repositories
+set "repos[1]=ARCHER|A.R.C.H.E.R|https://github.com/VAINS-Dev/A.R.C.H.E.R.git"
+set "repos[2]=LIPAS-Client|LIPAS-Client|https://github.com/VAINS-Dev/LIPAS-Client.git"
+set "repos[3]=VBA-Insurance-Core|VBA-Insurance-Core|https://github.com/VAINS-Dev/VBA-Insurance-Core.git"
+set "repos[4]=Insurance-Business-Services-Database|Insurance-Business-Services-Database|https://github.com/VAINS-Dev/Insurance-Business-Services-Database.git"
+
+:: Count the number of repositories
+set "repo_count=0"
+for /F "tokens=1 delims==" %%A in ('set repos[') do (
+    set /A repo_count+=1
+)
+
+:: Loop through repositories
+for /L %%i in (1,1,!repo_count!) do (
+    call :process_repo "!repos[%%i]!"
+)
+
+:: Clean up temporary files and variables
+set PAT=
+
+echo [%date% %time%] Script completed. >> "%log_file%"
+echo Process completed!
+pause
+exit /b
+
+:process_repo
+:: Extract repository information
+set "repo_info=%~1"
+for /F "tokens=1,2,3 delims=|" %%A in ("%repo_info%") do (
+    set "repo_display_name=%%A"
+    set "repo_folder_name=%%B"
+    set "repo_url=%%C@echo off
+setlocal EnableDelayedExpansion
+set "app_version=1.0.4"
+
+:: Define log file
+set "log_file=script_log.txt"
+
+:: Start script log
+echo [%date% %time%] Script started >> "%log_file%"
+
+:: Welcome message
+powershell -Command "Write-Host 'Welcome to Insurance Business Services!' -ForegroundColor Green"
+echo.
+powershell -Command "Write-Host 'Version: %app_version%' -ForegroundColor Green"
+echo Author: VAINS-Dev
+echo Description: This loader will download and update repositories for the Insurance Business Services project.
+echo.
+echo Version Changes:
+powershell -Command "Write-Host '1.0.0 - Initial version of the loader.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.1 - Added support for updating dependencies.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.2 - Added version check and update functionality.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.3 - Added support for updating the loader script.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.4 - Added support for updating the database configuration file.' -ForegroundColor Green"
+
+:: Check app version
+set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
+set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
+:: Download the latest script
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%')"
+
+:: Compare the current script to the downloaded script
+fc "%~f0" "%temp_script%" >nul
+if %ERRORLEVEL% NEQ 0 (
+    echo A newer version of this loader is available. Updating...
+    timeout /t 5 /nobreak >nul
+    copy /y "%temp_script%" "%~f0"
+    del "%temp_script%"
+    start "" "%~f0" %*
+    exit /b
+) else (
+    del "%temp_script%"
+)
+
+:: Create 'Configuration' folder if it doesn't exist
+if not exist "Configuration" (
+    mkdir "Configuration"
+    echo [%date% %time%] Created 'Configuration' folder. >> "%log_file%"
+)
+
+:: Check if 'databaseConfig.json' exists
+if exist "Configuration\databaseConfig.json" (
+    set /p "view_config=Configuration file exists. Would you like to view the configuration? (y/n): "
+    if /I "%view_config%"=="y" (
+        echo.
+        echo Current Configuration:
+        powershell -Command "Get-Content 'Configuration\databaseConfig.json' | ConvertFrom-Json | ConvertTo-Json -Depth 10 | Write-Host"
+        echo.
+        set /p "edit_config=Would you like to edit the configuration? (y/n): "
+        if /I "%edit_config%"=="y" (
+            powershell -Command ^
+            "$config = Get-Content 'Configuration\databaseConfig.json' | ConvertFrom-Json;" ^
+            "foreach ($key in $config.DatabaseConfiguration.PSObject.Properties.Name) {" ^
+            "  $currentValue = $config.DatabaseConfiguration.$key;" ^
+            "  Write-Host 'Current value for' $key ':' $currentValue;" ^
+            "  $newValue = Read-Host 'Enter new value for' $key ' (leave blank to keep current value):';" ^
+            "  if ($newValue -ne '') { $config.DatabaseConfiguration.$key = $newValue }" ^
+            "}" ^
+            "$config | ConvertTo-Json -Depth 10 | Set-Content 'Configuration\databaseConfig.json';"
+        )
+    )
+    echo Proceeding to verify PAT...
+) else (
+    echo Configuration file does not exist. Creating new configuration...
+    (
+        echo {
+        echo   "DatabaseConfiguration": {
+        echo     "DB_HOST": "host_value",
+        echo     "DB_USERNAME": "username_value",
+        echo     "DB_PASSWORD": "password_value",
+        echo     "DB_DATABASE": "database_value",
+        echo     "DB_INTEGRATED_SECURITY": true,
+        echo     "DB_TRUSTCONNECTION": true,
+        echo     "DB_TRUST_SERVER_CERTIFICATE": true,
+        echo     "DB_ENCRYPT": true,
+        echo     "DB_CONNECTION_TIMEOUT": 30000,
+        echo     "DB_DRIVER": "msnodesqlv8"
+        echo   }
+        echo }
+    ) > "Configuration\databaseConfig.json"
+    echo [%date% %time%] Created 'databaseConfig.json' file. >> "%log_file%"
+
+    powershell -Command ^
+    "$config = Get-Content 'Configuration\databaseConfig.json' | ConvertFrom-Json;" ^
+    "foreach ($key in $config.DatabaseConfiguration.PSObject.Properties.Name) {" ^
+    "  $value = Read-Host 'Enter value for' $key ':';" ^
+    "  if ($value -ne '') { $config.DatabaseConfiguration.$key = $value }" ^
+    "}" ^
+    "$config | ConvertTo-Json -Depth 10 | Set-Content 'Configuration\databaseConfig.json';"
+)
+
+:: Verify Git, PowerShell, and Node.js are installed
+git --version >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo Git is not installed or not in your PATH. Please install Git to continue.
+    echo [%date% %time%] Git not found. Exiting. >> "%log_file%"
+    pause
+    exit /b
+)
+powershell -Command "exit" >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo PowerShell is not installed or not in your PATH. Please install PowerShell to continue.
+    echo [%date% %time%] PowerShell not found. Exiting. >> "%log_file%"
+    pause
+    exit /b
+)
+node -v >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo Node.js is not installed or not in your PATH. Please install Node.js to continue.
+    echo [%date% %time%] Node.js not found. Exiting. >> "%log_file%"
+    pause
+    exit /b
+)
+
+:: Prompt for GitHub Personal Access Token (PAT)
+:prompt_pat
+set /p "PAT=Please enter your GitHub Personal Access Token (PAT): "
+
+:: Ensure PAT is not empty
+if "%PAT%"=="" (
+    echo No PAT entered. Please enter a valid PAT.
+    echo [%date% %time%] No PAT entered. >> "%log_file%"
+    goto prompt_pat
+)
+
+:: Log PAT entry (do not log the actual PAT)
+echo [%date% %time%] PAT entered by user. >> "%log_file%"
+
+:: Verify PAT by attempting to access the Git API
+echo Verifying PAT...
+curl -s -H "Authorization: token %PAT%" https://api.github.com/user >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo Invalid PAT or network error. Please try again.
+    echo [%date% %time%] Invalid PAT entered. >> "%log_file%"
+    set PAT=
     goto prompt_pat
 )
 echo PAT verified successfully.
