@@ -1,0 +1,14 @@
+{
+  "DatabaseConfiguration": {
+    "DB_HOST": "host_value",
+    "DB_USERNAME": "username_value",
+    "DB_PASSWORD": "password_value",
+    "DB_DATABASE": "database_value",
+    "DB_INTEGRATED_SECURITY": true,
+    "DB_TRUSTCONNECTION": true,
+    "DB_TRUST_SERVER_CERTIFICATE": true,
+    "DB_ENCRYPT": true,
+    "DB_CONNECTION_TIMEOUT": 30000,
+    "DB_DRIVER": "msnodesqlv8"
+  }
+}
