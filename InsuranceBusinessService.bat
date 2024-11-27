@@ -23,50 +23,30 @@ powershell -Command "Write-Host '1.0.3 - Added support for updating the loader s
 powershell -Command "Write-Host '1.0.4 - Added support for updating the database configuration file.' -ForegroundColor Green"
 
 :: Check app version
-
-::set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
-::set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
+set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
+set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
 :: Download the latest script
-::powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%')"
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%')"
 
 :: Compare the current script to the downloaded script
-::fc "%~f0" "%temp_script%" >nul
-::if %ERRORLEVEL% NEQ 0 (
-::    echo A newer version of this loader is available. Updating...
-::    timeout /t 5 /nobreak >nul
-::    copy /y "%temp_script%" "%~f0"
-::    del "%temp_script%"
-::    start "" "%~f0" %*
-::    exit /b
-::) else (
-::    del "%temp_script%"
-::)
+fc "%~f0" "%temp_script%" >nul
+if %ERRORLEVEL% NEQ 0 (
+    echo A newer version of this loader is available. Updating...
+    timeout /t 5 /nobreak >nul
+    copy /y "%temp_script%" "%~f0"
+    del "%temp_script%"
+    start "" "%~f0" %*
+    exit /b
+) else (
+    del "%temp_script%"
+)
 
-:: Create 'Configuration' folder if it doesn't exist
+:: Create 'Configuration' folder and 'databaseConfig.json' if they don't exist
 if not exist "Configuration" (
     mkdir "Configuration"
     echo [%date% %time%] Created 'Configuration' folder. >> "%log_file%"
 )
-
-:: Check if 'databaseConfig.json' exists
-if exist "Configuration\databaseConfig.json" (
-    set /p "view_config=Configuration file exists. Would you like to view the configuration? (y/n): "
-    if /I "%view_config%"=="y" (
-        echo.
-        echo Current Configuration:
-        powershell -Command "Get-Content 'Configuration\databaseConfig.json' | ConvertFrom-Json | ConvertTo-Json -Depth 10 | Write-Host"
-        echo.
-        set /p "edit_config=Would you like to edit the configuration? (y/n): "
-        if /I "%edit_config%"=="y" (
-            call :edit_config
-        ) else (
-            echo Proceeding to verify PAT...
-        )
-    ) else (
-        echo Proceeding to verify PAT...
-    )
-) else (
-    echo Configuration file does not exist. Creating new configuration...
+if not exist "Configuration\databaseConfig.json" (
     (
         echo {
         echo   "DatabaseConfiguration": {
@@ -84,54 +64,19 @@ if exist "Configuration\databaseConfig.json" (
         echo }
     ) > "Configuration\databaseConfig.json"
     echo [%date% %time%] Created 'databaseConfig.json' file. >> "%log_file%"
-    call :edit_config
+) else (
+    echo 'databaseConfig.json' already exists. >> "%log_file%"
 )
-
-:: Rest of your script...
-
-:: Verify Git, PowerShell, and Node.js are installed
-:: [Your existing checks]
-
-:: Rest of your script...
-
-goto :eof
-
-:edit_config
-(
-    echo $config = Get-Content 'Configuration\databaseConfig.json' ^| ConvertFrom-Json;
-    echo foreach ($key in $config.DatabaseConfiguration.PSObject.Properties.Name) {
-    echo   $currentValue = $config.DatabaseConfiguration.$key;
-    echo   Write-Host "Current value for $key : $currentValue";
-    echo   $newValue = Read-Host "Enter new value for $key (leave blank to keep current value):";
-    echo   if ($newValue -ne '') {
-    echo     $valueType = $currentValue.GetType().Name;
-    echo     switch ($valueType) {
-    echo       'Boolean' {
-    echo         if ($newValue -match '^(?i)true$|^(?i)false$') {
-    echo           $config.DatabaseConfiguration.$key = [bool]$newValue;
-    echo         } else {
-    echo           Write-Host "Invalid Boolean value entered. Keeping current value.";
-    echo         }
-    echo       }
-    echo       'Int32' {
-    echo         if ([int]::TryParse($newValue, [ref]$parsedValue)) {
-    echo           $config.DatabaseConfiguration.$key = $parsedValue;
-    echo         } else {
-    echo           Write-Host "Invalid integer value entered. Keeping current value.";
-    echo         }
-    echo       }
-    echo       default {
-    echo         $config.DatabaseConfiguration.$key = $newValue;
-    echo       }
-    echo     }
-    echo   }
-    echo }
-    echo $config ^| ConvertTo-Json -Depth 10 ^| Set-Content 'Configuration\databaseConfig.json';
-) > temp_edit_config.ps1
-
-powershell -ExecutionPolicy Bypass -File temp_edit_config.ps1
-
-del temp_edit_config.ps1
+:: Option to print current database configuration
+set /p "print_config=Would you like to print the current database configuration? (y/n): "
+if /I "%print_config%"=="y" (
+    echo Current database configuration:
+    type "Configuration\databaseConfig.json"
+    echo [%date% %time%] Printed current database configuration. >> "%log_file%"
+) else (
+    echo Skipping printing of database configuration.
+    echo [%date% %time%] Skipped printing of database configuration. >> "%log_file%"
+)
 
 :: Verify Git, PowerShell, and Node.js are installed
 git --version >nul 2>&1
