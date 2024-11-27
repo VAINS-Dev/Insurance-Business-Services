@@ -11,6 +11,24 @@ echo [%date% %time%] Script started >> "%log_file%"
 echo Welcome to Insurance Business Services!
 echo.
 
+:: Check app version
+set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
+set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
+
+:: Download the latest script
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%')"
+
+:: Compare the current script to the downloaded script
+fc "%~f0" "%temp_script%" >nul
+if %ERRORLEVEL% NEQ 0 (
+    echo A newer version of this script is available. Updating...
+    copy /y "%temp_script%" "%~f0"
+    del "%temp_script%"
+    start "" "%~f0" %*
+    exit /b
+) else (
+    del "%temp_script%"
+)
 :: Create 'Configuration' folder and 'databaseConfig.json' if they don't exist
 if not exist "Configuration" (
     mkdir "Configuration"
