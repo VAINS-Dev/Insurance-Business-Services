@@ -25,8 +25,31 @@ powershell -Command "Write-Host '1.0.4 - Added support for updating the database
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
 set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
-:: Download the latest script
-powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%')"
+
+:: Download the latest script with retry logic
+set "max_retries=3"
+set "retry_count=0"
+:download_script
+powershell -Command ^
+    "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; " ^
+    "try { " ^
+    "  (New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%'); " ^
+    "  exit 0; " ^
+    "} catch { " ^
+    "  Write-Host 'Download failed. Retrying...'; " ^
+    "  exit 1; " ^
+    "}"
+if %ERRORLEVEL% NEQ 0 (
+    set /A retry_count+=1
+    if %retry_count% LSS %max_retries% (
+        timeout /t 5 /nobreak >nul
+        goto download_script
+    ) else (
+        echo Failed to download the latest script after %max_retries% attempts. Exiting...
+        echo [%date% %time%] Failed to download the latest script after %max_retries% attempts. >> "%log_file%"
+        exit /b
+    )
+)
 
 :: Compare the current script to the downloaded script
 fc "%~f0" "%temp_script%" >nul
@@ -156,7 +179,6 @@ if not exist "Repo-Backup" (
     echo [%date% %time%] Created Repo-Backup directory. >> "%log_file%"
 )
 
-
 :: Define repositories
 set "repos[1]=ARCHER|A.R.C.H.E.R|https://github.com/VAINS-Dev/A.R.C.H.E.R.git"
 set "repos[2]=LIPAS-Client|LIPAS-Client|https://github.com/VAINS-Dev/LIPAS-Client.git"
@@ -175,11 +197,7 @@ for /L %%i in (1,1,!repo_count!) do (
 )
 
 :: Clean up temporary files and variables
-del "%ASKPASS_SCRIPT%"
 set PAT=
-set GIT_ASKPASS=
-set GIT_TERMINAL_PROMPT=
-
 echo [%date% %time%] Script completed. >> "%log_file%"
 echo Process completed!
 pause
