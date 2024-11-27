@@ -10,6 +10,10 @@ echo [%date% %time%] Script started >> "%log_file%"
 :: Welcome message
 echo Welcome to Insurance Business Services!
 echo.
+echo Version: 1.0.1
+echo Author: VAINS-Dev
+echo Description: This script will download and update repositories for the Insurance Business Services project.
+echo.
 
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
@@ -22,6 +26,7 @@ powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%t
 fc "%~f0" "%temp_script%" >nul
 if %ERRORLEVEL% NEQ 0 (
     echo A newer version of this script is available. Updating...
+    timeout /t 5 /nobreak >nul
     copy /y "%temp_script%" "%~f0"
     del "%temp_script%"
     start "" "%~f0" %*
