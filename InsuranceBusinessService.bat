@@ -12,7 +12,7 @@ echo Welcome to Insurance Business Services!
 echo.
 echo Version: 1.0.1
 echo Author: VAINS-Dev
-echo Description: This script will download and update repositories for the Insurance Business Services project.
+echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
 
 :: Check app version
@@ -25,7 +25,7 @@ powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%t
 :: Compare the current script to the downloaded script
 fc "%~f0" "%temp_script%" >nul
 if %ERRORLEVEL% NEQ 0 (
-    echo A newer version of this script is available. Updating...
+    echo A newer version of this loader is available. Updating...
     timeout /t 5 /nobreak >nul
     copy /y "%temp_script%" "%~f0"
     del "%temp_script%"
