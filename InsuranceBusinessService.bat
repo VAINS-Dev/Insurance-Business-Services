@@ -89,6 +89,11 @@ if exist "Configuration\databaseConfig.json" (
 
 :: Rest of your script...
 
+:: Verify Git, PowerShell, and Node.js are installed
+:: [Your existing checks]
+
+:: Rest of your script...
+
 goto :eof
 
 :edit_config
@@ -102,7 +107,7 @@ goto :eof
     echo     $valueType = $currentValue.GetType().Name;
     echo     switch ($valueType) {
     echo       'Boolean' {
-    echo         if ($newValue -match '^(true|false)$') {
+    echo         if ($newValue -match '^(?i)true$|^(?i)false$') {
     echo           $config.DatabaseConfiguration.$key = [bool]$newValue;
     echo         } else {
     echo           Write-Host "Invalid Boolean value entered. Keeping current value.";
@@ -127,8 +132,6 @@ goto :eof
 powershell -ExecutionPolicy Bypass -File temp_edit_config.ps1
 
 del temp_edit_config.ps1
-
-goto :eof
 
 :: Verify Git, PowerShell, and Node.js are installed
 git --version >nul 2>&1
