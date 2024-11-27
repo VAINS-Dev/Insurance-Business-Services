@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-set "app_version=1.0.2"
+set "app_version=1.0.3"
 
 :: Define log file
 set "log_file=script_log.txt"
@@ -20,6 +20,7 @@ echo Version Changes:
 echo [32m1.0.0[0m - Initial version of the loader.
 echo [32m1.0.1[0m - Added support for updating dependencies.
 echo [32m1.0.2[0m - Added version check and update functionality.
+echo [32m1.0.3[0m - Added support for updating the loader script.
 
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
