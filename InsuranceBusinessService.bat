@@ -11,7 +11,7 @@ echo [%date% %time%] Script started >> "%log_file%"
 :: Welcome message
 powershell -Command "Write-Host 'Welcome to Insurance Business Services!' -ForegroundColor Green"
 echo.
-powershell -Command "Write-Host 'Version: \"%app_version%\"' -ForegroundColor Green"
+powershell -Command "Write-Host 'Version: \%app_version%\' -ForegroundColor Green"
 echo Author: VAINS-Dev
 echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
