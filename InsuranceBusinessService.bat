@@ -10,17 +10,17 @@ set "log_file=script_log.txt"
 echo [%date% %time%] Script started >> "%log_file%"
 
 :: Welcome message
-echo [32mWelcome to Insurance Business Services![0m
+powershell -Command "Write-Host 'Welcome to Insurance Business Services!' -ForegroundColor Green"
 echo.
-echo Version: [32m"%app_version%"[0m
+powershell -Command "Write-Host 'Version: \"%app_version%\"' -ForegroundColor Green"
 echo Author: VAINS-Dev
 echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
 echo Version Changes:
-echo [32m1.0.0[0m - Initial version of the loader.
-echo [32m1.0.1[0m - Added support for updating dependencies.
-echo [32m1.0.2[0m - Added version check and update functionality.
-echo [32m1.0.3[0m - Added support for updating the loader script.
+powershell -Command "Write-Host '1.0.0' -ForegroundColor Green"; echo - Initial version of the loader.
+powershell -Command "Write-Host '1.0.1' -ForegroundColor Green"; echo - Added support for updating dependencies.
+powershell -Command "Write-Host '1.0.2' -ForegroundColor Green"; echo - Added version check and update functionality.
+powershell -Command "Write-Host '1.0.3' -ForegroundColor Green"; echo - Added support for updating the loader script.
 
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
