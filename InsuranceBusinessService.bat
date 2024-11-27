@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-set "app_version"=1.0.2
+set "app_version=1.0.2"
 
 :: Define log file
 set "log_file=script_log.txt"
