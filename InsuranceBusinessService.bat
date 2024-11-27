@@ -157,7 +157,6 @@ if not exist "Repo-Backup" (
 )
 
 
-
 :: Define repositories
 set "repos[1]=ARCHER|A.R.C.H.E.R|https://github.com/VAINS-Dev/A.R.C.H.E.R.git"
 set "repos[2]=LIPAS-Client|LIPAS-Client|https://github.com/VAINS-Dev/LIPAS-Client.git"
