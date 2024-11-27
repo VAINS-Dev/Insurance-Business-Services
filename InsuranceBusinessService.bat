@@ -22,6 +22,27 @@ powershell -Command "Write-Host '1.0.2 - Added version check and update function
 powershell -Command "Write-Host '1.0.3 - Added support for updating the loader script.' -ForegroundColor Green"
 powershell -Command "Write-Host '1.0.4 - Added support for updating the database configuration file.' -ForegroundColor Green"
 
+
+:: Check app version
+set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
+set "temp_script=%TEMP%\InsuranceBusinessService_new.bat"
+:: Download the latest script
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%script_url%', '%temp_script%')"
+
+:: Compare the current script to the downloaded script
+fc "%~f0" "%temp_script%" >nul
+if %ERRORLEVEL% NEQ 0 (
+    echo A newer version of this loader is available. Updating...
+    timeout /t 5 /nobreak >nul
+    copy /y "%temp_script%" "%~f0"
+    del "%temp_script%"
+    start "" "%~f0" %*
+    exit /b
+) else (
+    del "%temp_script%"
+)
+
+
 :: Create 'Configuration' folder if it doesn't exist
 if not exist "Configuration" (
     mkdir "Configuration"
