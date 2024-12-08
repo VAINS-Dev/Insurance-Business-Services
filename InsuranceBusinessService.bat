@@ -1,5 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
+set "GIT_PULL_CMD=git fetch --all & git reset --hard origin/!branch!"
 set "app_version=1.0.5"
 
 :: Define log file
@@ -16,8 +17,8 @@ echo Author: VAINS-Dev
 echo Description: This loader will download and update repositories for the Insurance Business Services project.
 echo.
 echo Version Changes:
-powershell -Command "Write-Host '1.0.4 - Added support for updating the database configuration file.' -ForegroundColor Green"
 powershell -Command "Write-Host '1.0.5 - Added support for updating the documentation repository.' -ForegroundColor Green"
+powershell -Command "Write-Host '1.0.6 - Modified pull to force. Overriding local changes.' -ForegroundColor Green"
 
 :: Check app version
 set "script_url=https://raw.githubusercontent.com/VAINS-Dev/Insurance-Business-Services/main/InsuranceBusinessService.bat"
@@ -286,9 +287,9 @@ if /I "!download!"=="y" (
         set GIT_ASKPASS=%ASKPASS_SCRIPT%
         set GIT_TERMINAL_PROMPT=0
 
-        git fetch
-        git checkout "!branch!"
-        git pull origin "!branch!"
+        git fetch --all
+        git reset --hard origin/!branch!
+        git clean -fd
         if !ERRORLEVEL! NEQ 0 (
             echo Error pulling !repo_display_name!. Check log for details.
             echo [%date% %time%] Error pulling !repo_display_name!. >> "..\%log_file%"
